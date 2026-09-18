@@ -124,6 +124,28 @@
       opacity: 1;
     }
 
+    #debug-banner {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff0044;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: bold;
+      z-index: 9500;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #debug-banner.show {
+      opacity: 1;
+    }
+
     #info-popup {
       display: none;
       position: fixed;
@@ -187,11 +209,11 @@
 
   <div id="control-hint">Drag = Rotate • Pinch = Zoom • Tap = Learn</div>
 
-  <div id="debug-banner" style="position:fixed; top:60px; left:50%; transform:translateX(-50%); background:#ff0044; color:white; padding:10px 18px; border-radius:10px; font-size:16px; font-weight:bold; z-index:9500; display:none;"></div>
+  <div id="debug-banner"></div>
 
   <a-scene
     mindar-image="
-      imageTargetSrc: targets%20%281%29.mind?v=2;
+      imageTargetSrc: targets%20%281%29.mind?v=3;
       autoStart: true;
       uiScanning: yes;
       uiLoading: no;
@@ -221,7 +243,19 @@
     <a-light type="directional" intensity="2" position="2 4 3"></a-light>
     <a-light type="directional" intensity="1.5" position="-3 2 1"></a-light>
 
-    <!-- TARGET - HEART (index 2 in the .mind file) -->
+    <!--
+      ======================================================
+      TARGET INDEX ASSIGNMENT
+      If an organ ever shows up on the wrong image, DO NOT
+      touch anything else in this file. Just change the
+      number after "targetIndex:" on the three lines below
+      (search for "TARGET -"), using the red debug banner
+      that appears on screen when you scan each image as
+      your guide. Nothing else needs to change.
+      ======================================================
+    -->
+
+    <!-- TARGET - HEART -->
     <a-entity id="target-heart" mindar-image-target="targetIndex: 2">
       <a-entity id="heart-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
@@ -256,7 +290,7 @@
       </a-entity>
     </a-entity>
 
-    <!-- TARGET - BRAIN (index 1 in the .mind file) -->
+    <!-- TARGET - BRAIN -->
     <a-entity id="target-brain" mindar-image-target="targetIndex: 1">
       <a-entity id="brain-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
@@ -291,7 +325,7 @@
       </a-entity>
     </a-entity>
 
-    <!-- TARGET - KIDNEY (index 0 in the .mind file) -->
+    <!-- TARGET - KIDNEY -->
     <a-entity id="target-kidney" mindar-image-target="targetIndex: 0">
       <a-entity id="kidney-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
@@ -319,7 +353,7 @@
       </a-entity>
     </a-entity>
 
-    <!-- DEBUG PROBES: raw index detectors, independent of organ naming -->
+    <!-- RAW INDEX PROBES: independent of organ naming, used only to feed the debug banner -->
     <a-entity id="probe-0" mindar-image-target="targetIndex: 0"></a-entity>
     <a-entity id="probe-1" mindar-image-target="targetIndex: 1"></a-entity>
     <a-entity id="probe-2" mindar-image-target="targetIndex: 2"></a-entity>
@@ -339,11 +373,22 @@
       const loading = document.getElementById("loading-screen");
       const loadingText = document.getElementById("loading-text");
 
+      /* ================================================
+         DEBUG BANNER
+         Shows the raw target index the compiler assigned
+         to whatever image was just scanned. Use this to
+         verify or fix the targetIndex numbers above.
+      ================================================= */
       const debugBanner = document.getElementById("debug-banner");
+      let debugHideTimer = null;
       [0, 1, 2].forEach((i) => {
         document.getElementById("probe-" + i).addEventListener("targetFound", () => {
-          debugBanner.textContent = "RAW INDEX DETECTED: " + i;
-          debugBanner.style.display = "block";
+          debugBanner.textContent = "Raw compiled index for this image: " + i;
+          debugBanner.classList.add("show");
+          clearTimeout(debugHideTimer);
+          debugHideTimer = setTimeout(() => {
+            debugBanner.classList.remove("show");
+          }, 4000);
         });
       });
 
