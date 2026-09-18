@@ -187,9 +187,11 @@
 
   <div id="control-hint">Drag = Rotate • Pinch = Zoom • Tap = Learn</div>
 
+  <div id="debug-banner" style="position:fixed; top:60px; left:50%; transform:translateX(-50%); background:#ff0044; color:white; padding:10px 18px; border-radius:10px; font-size:16px; font-weight:bold; z-index:9500; display:none;"></div>
+
   <a-scene
     mindar-image="
-      imageTargetSrc: targets%20%281%29.mind;
+      imageTargetSrc: targets%20%281%29.mind?v=2;
       autoStart: true;
       uiScanning: yes;
       uiLoading: no;
@@ -317,6 +319,11 @@
       </a-entity>
     </a-entity>
 
+    <!-- DEBUG PROBES: raw index detectors, independent of organ naming -->
+    <a-entity id="probe-0" mindar-image-target="targetIndex: 0"></a-entity>
+    <a-entity id="probe-1" mindar-image-target="targetIndex: 1"></a-entity>
+    <a-entity id="probe-2" mindar-image-target="targetIndex: 2"></a-entity>
+
   </a-scene>
 
   <div id="info-popup">
@@ -331,6 +338,14 @@
       const scene = document.querySelector("a-scene");
       const loading = document.getElementById("loading-screen");
       const loadingText = document.getElementById("loading-text");
+
+      const debugBanner = document.getElementById("debug-banner");
+      [0, 1, 2].forEach((i) => {
+        document.getElementById("probe-" + i).addEventListener("targetFound", () => {
+          debugBanner.textContent = "RAW INDEX DETECTED: " + i;
+          debugBanner.style.display = "block";
+        });
+      });
 
       const targetHeart = document.getElementById("target-heart");
       const targetBrain = document.getElementById("target-brain");
