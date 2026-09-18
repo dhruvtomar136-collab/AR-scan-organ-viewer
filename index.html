@@ -28,148 +28,283 @@
 
     html,
     body {
+
       margin: 0;
       padding: 0;
+
       width: 100%;
       height: 100%;
+
       overflow: hidden;
+
       background: transparent;
+
       font-family: Arial, sans-serif;
     }
 
+
+    /* =====================================================
+       CAMERA VIDEO
+    ===================================================== */
+
     video {
+
       position: fixed !important;
+
       top: 0 !important;
       left: 0 !important;
+
       width: 100% !important;
       height: 100% !important;
+
       object-fit: cover !important;
+
       z-index: 0 !important;
+
       display: block !important;
     }
 
+
+    /* =====================================================
+       AR SCENE
+    ===================================================== */
+
     a-scene {
+
       position: fixed !important;
+
       top: 0 !important;
       left: 0 !important;
+
       width: 100% !important;
       height: 100% !important;
+
       margin: 0 !important;
       padding: 0 !important;
+
       background: transparent !important;
+
       z-index: 1 !important;
     }
 
+
     canvas {
+
       background: transparent !important;
     }
 
+
+    /* =====================================================
+       LOADING SCREEN
+    ===================================================== */
+
     #loading-screen {
+
       position: fixed;
+
       inset: 0;
+
       background: #0b0f14;
+
       color: white;
+
       display: flex;
+
       flex-direction: column;
+
       justify-content: center;
+
       align-items: center;
+
       text-align: center;
+
       z-index: 10000;
+
       transition: opacity 0.4s ease;
     }
 
+
     #loading-screen .spinner {
+
       width: 42px;
       height: 42px;
+
       border: 4px solid rgba(255,255,255,0.2);
+
       border-top-color: #ff5566;
+
       border-radius: 50%;
+
       animation: spin 0.9s linear infinite;
+
       margin-bottom: 15px;
     }
 
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+
+      to {
+        transform: rotate(360deg);
+      }
+
     }
 
+
     #loading-screen.hidden {
+
       opacity: 0;
+
       pointer-events: none;
     }
 
+
     #loading-screen p {
+
       margin: 5px;
+
       font-size: 14px;
+
       opacity: 0.85;
     }
 
+
+    /* =====================================================
+       CONTROL MESSAGE
+    ===================================================== */
+
     #control-hint {
+
       position: fixed;
+
       top: 15px;
+
       left: 50%;
+
       transform: translateX(-50%);
+
       background: rgba(0,0,0,0.70);
+
       color: white;
+
       padding: 9px 15px;
+
       border-radius: 20px;
+
       font-size: 13px;
+
       z-index: 9000;
+
       opacity: 0;
+
       transition: opacity 0.4s ease;
+
       pointer-events: none;
+
       white-space: nowrap;
     }
 
+
     #control-hint.show {
+
       opacity: 1;
     }
+
+
+    /* =====================================================
+       INFORMATION POPUP
+    ===================================================== */
 
     #info-popup {
+
       display: none;
+
       position: fixed;
+
       left: 50%;
+
       bottom: 22px;
-      transform: translateX(-50%) translateY(10px);
+
+      transform:
+        translateX(-50%)
+        translateY(10px);
+
       width: 350px;
+
       max-width: 88%;
+
       padding: 18px 45px 18px 18px;
+
       background: rgba(15,18,22,0.95);
+
       color: white;
+
       border-radius: 15px;
+
       border-left: 4px solid #ff5566;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+
+      box-shadow:
+        0 8px 25px rgba(0,0,0,0.5);
+
       z-index: 9999;
+
       opacity: 0;
-      transition: opacity 0.25s ease, transform 0.25s ease;
+
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
     }
+
 
     #info-popup.visible {
+
       display: block;
+
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+
+      transform:
+        translateX(-50%)
+        translateY(0);
     }
 
+
     #info-title {
+
       margin: 0 0 7px 0;
+
       color: #ff6677;
+
       font-size: 18px;
+
       font-weight: bold;
     }
 
+
     #info-text {
+
       margin: 0;
+
       font-size: 15px;
+
       line-height: 1.5;
     }
 
+
     #close-popup {
+
       position: absolute;
+
       top: 8px;
+
       right: 10px;
+
       border: none;
+
       background: none;
+
       color: white;
+
       font-size: 21px;
+
       cursor: pointer;
     }
 
@@ -177,335 +312,1154 @@
 
 </head>
 
+
 <body>
 
+
+  <!-- =====================================================
+       LOADING SCREEN
+  ===================================================== -->
+
   <div id="loading-screen">
+
     <div class="spinner"></div>
-    <p id="loading-text">Starting camera...</p>
-    <p style="font-size:12px; opacity:0.55;">Allow camera access and point at a target image</p>
+
+    <p id="loading-text">
+      Starting camera...
+    </p>
+
+    <p style="font-size:12px; opacity:0.55;">
+      Allow camera access and point at a target image
+    </p>
+
   </div>
 
-  <div id="control-hint">Drag = Rotate • Pinch = Zoom • Tap = Learn</div>
+
+  <!-- =====================================================
+       CONTROLS
+  ===================================================== -->
+
+  <div id="control-hint">
+    Drag = Rotate • Pinch = Zoom • Tap = Learn
+  </div>
+
+
+  <!-- =====================================================
+       AR SCENE
+  ===================================================== -->
 
   <a-scene
+
     mindar-image="
       imageTargetSrc: targets%20%281%29.mind;
       autoStart: true;
       uiScanning: yes;
       uiLoading: no;
     "
+
     color-space="sRGB"
+
     renderer="
       alpha: true;
       colorManagement: true;
       antialias: true;
     "
+
     vr-mode-ui="enabled: false"
+
     device-orientation-permission-ui="enabled: false"
+
     embedded
   >
 
+
+    <!-- =================================================
+         MODEL ASSETS
+    ================================================= -->
+
     <a-assets>
-      <a-asset-item id="heartModel"  src="realistic_human_heart%284%29.glb"></a-asset-item>
-      <a-asset-item id="brainModel"  src="low-poly_human_brain_model%281%29.glb"></a-asset-item>
-      <a-asset-item id="kidneyModel" src="human_kidney.glb"></a-asset-item>
+
+      <a-asset-item
+        id="heartModel"
+        src="realistic_human_heart%284%29.glb">
+      </a-asset-item>
+
+      <a-asset-item
+        id="brainModel"
+        src="low-poly_human_brain_model%281%29.glb">
+      </a-asset-item>
+
+      <a-asset-item
+        id="kidneyModel"
+        src="human_kidney.glb">
+      </a-asset-item>
+
     </a-assets>
 
-    <a-camera position="0 0 0" look-controls="enabled: false" cursor="rayOrigin: mouse; fuse: false">
-      <a-entity cursor="fuse: false" raycaster="objects: .clickable; far: 20;" position="0 0 -1"></a-entity>
+
+    <!-- =================================================
+         CAMERA
+    ================================================= -->
+
+    <a-camera
+
+      position="0 0 0"
+
+      look-controls="enabled: false"
+
+      cursor="rayOrigin: mouse; fuse: false"
+    >
+
+      <a-entity
+
+        cursor="fuse: false"
+
+        raycaster="
+          objects: .clickable;
+          far: 20;
+        "
+
+        position="0 0 -1"
+      >
+      </a-entity>
+
     </a-camera>
 
-    <a-light type="ambient" intensity="2"></a-light>
-    <a-light type="directional" intensity="2" position="2 4 3"></a-light>
-    <a-light type="directional" intensity="1.5" position="-3 2 1"></a-light>
 
-    <!-- TARGET 0 - HEART (index 1 in the .mind file) -->
-    <a-entity id="target-heart" mindar-image-target="targetIndex: 1">
-      <a-entity id="heart-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
+    <!-- =================================================
+         LIGHTING
+         IMPORTANT: Makes the GLBs visible
+    ================================================= -->
+
+    <a-light
+      type="ambient"
+      intensity="2">
+    </a-light>
+
+
+    <a-light
+      type="directional"
+      intensity="2"
+      position="2 4 3">
+    </a-light>
+
+
+    <a-light
+      type="directional"
+      intensity="1.5"
+      position="-3 2 1">
+    </a-light>
+
+
+    <!-- =================================================
+         TARGET 0 — HEART
+    ================================================= -->
+
+    <a-entity
+      id="target-heart"
+      mindar-image-target="targetIndex: 1"
+    >
+
+      <a-entity
+        id="heart-wrapper"
+
+        position="0 0 0"
+
+        rotation="0 0 0"
+
+        scale="0.5 0.5 0.5"
+      >
+
 
         <a-gltf-model
-          id="heart-model" class="clickable main-model"
+
+          id="heart-model"
+
+          class="clickable main-model"
+
           data-title="❤️ Human Heart"
+
           data-info="The human heart is a muscular organ that pumps blood throughout the body. The right side receives deoxygenated blood, while the left side pumps oxygenated blood to the body."
-          src="#heartModel" position="0 0 0" rotation="0 0 0" visible="true">
+
+          src="#heartModel"
+
+          position="0 0 0"
+
+          rotation="0 0 0"
+
+          visible="true"
+        >
         </a-gltf-model>
 
-        <a-sphere class="clickable hotspot"
+
+        <!-- RIGHT ATRIUM -->
+
+        <a-sphere
+
+          class="clickable hotspot"
+
           data-title="Right Atrium"
+
           data-info="The right atrium receives deoxygenated blood returning from the body through the vena cava."
-          position="0.3 0.4 0.2" radius="0.05"
-          material="color:#ff5566; opacity:0.85; transparent:true; shader:flat;">
+
+          position="0.3 0.4 0.2"
+
+          radius="0.05"
+
+          material="
+            color:#ff5566;
+            opacity:0.85;
+            transparent:true;
+            shader:flat;
+          "
+        >
         </a-sphere>
 
-        <a-sphere class="clickable hotspot"
+
+        <!-- LEFT VENTRICLE -->
+
+        <a-sphere
+
+          class="clickable hotspot"
+
           data-title="Left Ventricle"
+
           data-info="The left ventricle pumps oxygenated blood out to the body through the aorta."
-          position="-0.2 0.1 0.3" radius="0.05"
-          material="color:#33aaff; opacity:0.85; transparent:true; shader:flat;">
+
+          position="-0.2 0.1 0.3"
+
+          radius="0.05"
+
+          material="
+            color:#33aaff;
+            opacity:0.85;
+            transparent:true;
+            shader:flat;
+          "
+        >
         </a-sphere>
 
-        <a-sphere class="clickable hotspot"
+
+        <!-- AORTIC VALVE -->
+
+        <a-sphere
+
+          class="clickable hotspot"
+
           data-title="Aortic Valve"
+
           data-info="The aortic valve helps prevent blood from flowing backward into the left ventricle."
-          position="0 0.5 0" radius="0.05"
-          material="color:#ffcc00; opacity:0.85; transparent:true; shader:flat;">
+
+          position="0 0.5 0"
+
+          radius="0.05"
+
+          material="
+            color:#ffcc00;
+            opacity:0.85;
+            transparent:true;
+            shader:flat;
+          "
+        >
         </a-sphere>
 
+
       </a-entity>
+
     </a-entity>
 
-    <!-- TARGET 1 - BRAIN (index 0 in the .mind file) -->
-    <a-entity id="target-brain" mindar-image-target="targetIndex: 0">
-      <a-entity id="brain-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
+
+    <!-- =================================================
+         TARGET 1 — BRAIN
+    ================================================= -->
+
+    <a-entity
+      id="target-brain"
+      mindar-image-target="targetIndex: 0"
+    >
+
+      <a-entity
+        id="brain-wrapper"
+
+        position="0 0 0"
+
+        rotation="0 0 0"
+
+        scale="0.5 0.5 0.5"
+      >
+
 
         <a-gltf-model
-          id="brain-model" class="clickable main-model"
+
+          id="brain-model"
+
+          class="clickable main-model"
+
           data-title="🧠 Human Brain"
+
           data-info="The human brain is the control center of the nervous system. It processes sensory information, coordinates movement, and governs thought, memory, and emotion."
-          src="#brainModel" position="0 0 0" rotation="0 0 0" visible="true">
+
+          src="#brainModel"
+
+          position="0 0 0"
+
+          rotation="0 0 0"
+
+          visible="true"
+        >
         </a-gltf-model>
 
-        <a-sphere class="clickable hotspot"
+
+        <!-- FRONTAL LOBE -->
+
+        <a-sphere
+
+          class="clickable hotspot"
+
           data-title="Frontal Lobe"
+
           data-info="The frontal lobe governs reasoning, planning, problem-solving, movement, and parts of speech and personality."
-          position="0 0.3 0.35" radius="0.05"
-          material="color:#66ccff; opacity:0.85; transparent:true; shader:flat;">
+
+          position="0 0.3 0.35"
+
+          radius="0.05"
+
+          material="
+            color:#66ccff;
+            opacity:0.85;
+            transparent:true;
+            shader:flat;
+          "
+        >
         </a-sphere>
 
-        <a-sphere class="clickable hotspot"
+
+        <!-- CEREBELLUM -->
+
+        <a-sphere
+
+          class="clickable hotspot"
+
           data-title="Cerebellum"
+
           data-info="The cerebellum coordinates voluntary movements such as posture, balance, and speech, producing smooth and coordinated muscular activity."
-          position="0 -0.15 -0.35" radius="0.05"
-          material="color:#88ff88; opacity:0.85; transparent:true; shader:flat;">
+
+          position="0 -0.15 -0.35"
+
+          radius="0.05"
+
+          material="
+            color:#88ff88;
+            opacity:0.85;
+            transparent:true;
+            shader:flat;
+          "
+        >
         </a-sphere>
 
-        <a-sphere class="clickable hotspot"
+
+        <!-- BRAINSTEM -->
+
+        <a-sphere
+
+          class="clickable hotspot"
+
           data-title="Brainstem"
+
           data-info="The brainstem connects the brain to the spinal cord and controls basic life functions like breathing, heart rate, and blood pressure."
-          position="0 -0.35 -0.05" radius="0.05"
-          material="color:#ff9944; opacity:0.85; transparent:true; shader:flat;">
+
+          position="0 -0.35 -0.05"
+
+          radius="0.05"
+
+          material="
+            color:#ff9944;
+            opacity:0.85;
+            transparent:true;
+            shader:flat;
+          "
+        >
         </a-sphere>
+
 
       </a-entity>
+
     </a-entity>
 
-    <!-- TARGET 2 - KIDNEY (index 2 in the .mind file) -->
-    <a-entity id="target-kidney" mindar-image-target="targetIndex: 2">
-      <a-entity id="kidney-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
+
+    <!-- =================================================
+         TARGET 2 — KIDNEY
+    ================================================= -->
+
+    <a-entity
+      id="target-kidney"
+      mindar-image-target="targetIndex: 2"
+    >
+
+      <a-entity
+        id="kidney-wrapper"
+
+        position="0 0 0"
+
+        rotation="0 0 0"
+
+        scale="0.5 0.5 0.5"
+      >
+
 
         <a-gltf-model
-          id="kidney-model" class="clickable main-model"
+
+          id="kidney-model"
+
+          class="clickable main-model"
+
           data-title="🫘 Human Kidney"
+
           data-info="The kidneys filter waste and excess fluid from the blood, producing urine, and help regulate blood pressure, electrolytes, and red blood cell production."
-          src="#kidneyModel" position="0 0 0" rotation="0 0 0" visible="true">
+
+          src="#kidneyModel"
+
+          position="0 0 0"
+
+          rotation="0 0 0"
+
+          visible="true"
+        >
         </a-gltf-model>
 
-        <a-sphere class="clickable hotspot"
+
+        <!-- RENAL CORTEX -->
+
+        <a-sphere
+
+          class="clickable hotspot"
+
           data-title="Renal Cortex"
+
           data-info="The outer region of the kidney, where blood filtration begins in structures called nephrons."
-          position="0.2 0.3 0.2" radius="0.05"
-          material="color:#66ccff; opacity:0.85; transparent:true; shader:flat;">
+
+          position="0.2 0.3 0.2"
+
+          radius="0.05"
+
+          material="
+            color:#66ccff;
+            opacity:0.85;
+            transparent:true;
+            shader:flat;
+          "
+        >
         </a-sphere>
 
-        <a-sphere class="clickable hotspot"
+
+        <!-- RENAL PELVIS -->
+
+        <a-sphere
+
+          class="clickable hotspot"
+
           data-title="Renal Pelvis"
+
           data-info="A funnel-shaped structure that collects urine before it travels down the ureter to the bladder."
-          position="-0.15 -0.1 0.1" radius="0.05"
-          material="color:#ffaa33; opacity:0.85; transparent:true; shader:flat;">
+
+          position="-0.15 -0.1 0.1"
+
+          radius="0.05"
+
+          material="
+            color:#ffaa33;
+            opacity:0.85;
+            transparent:true;
+            shader:flat;
+          "
+        >
         </a-sphere>
+
 
       </a-entity>
+
     </a-entity>
 
   </a-scene>
 
+
+  <!-- =====================================================
+       INFORMATION POPUP
+  ===================================================== -->
+
   <div id="info-popup">
-    <button id="close-popup">✕</button>
-    <h2 id="info-title">Human Heart</h2>
-    <p id="info-text">The human heart is a muscular organ that pumps blood throughout the body.</p>
+
+    <button id="close-popup">
+      ✕
+    </button>
+
+    <h2 id="info-title">
+      Human Heart
+    </h2>
+
+    <p id="info-text">
+      The human heart is a muscular organ that pumps
+      blood throughout the body.
+    </p>
+
   </div>
 
+
+  <!-- =====================================================
+       JAVASCRIPT
+  ===================================================== -->
+
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
 
-      const scene = document.querySelector("a-scene");
-      const loading = document.getElementById("loading-screen");
-      const loadingText = document.getElementById("loading-text");
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
 
-      const targetHeart = document.getElementById("target-heart");
-      const targetBrain = document.getElementById("target-brain");
-      const targetKidney = document.getElementById("target-kidney");
 
-      const heartWrapper = document.getElementById("heart-wrapper");
-      const brainWrapper = document.getElementById("brain-wrapper");
-      const kidneyWrapper = document.getElementById("kidney-wrapper");
+        /* ================================================
+           ELEMENTS
+        ================================================= */
 
-      const hint = document.getElementById("control-hint");
-      const popup = document.getElementById("info-popup");
-      const title = document.getElementById("info-title");
-      const text = document.getElementById("info-text");
-      const close = document.getElementById("close-popup");
+        const scene =
+          document.querySelector("a-scene");
 
-      const targets = {
-        heart:  { wrapper: heartWrapper,  rotateX: 0, rotateY: 0, scale: 0.5 },
-        brain:  { wrapper: brainWrapper,  rotateX: 0, rotateY: 0, scale: 0.5 },
-        kidney: { wrapper: kidneyWrapper, rotateX: 0, rotateY: 0, scale: 0.5 }
-      };
+        const loading =
+          document.getElementById("loading-screen");
 
-      let activeKey = null;
+        const loadingText =
+          document.getElementById("loading-text");
 
-      scene.addEventListener("renderstart", () => {
-        loadingText.textContent = "Camera ready — scan a target image";
-      });
+        const targetHeart =
+          document.getElementById("target-heart");
 
-      scene.addEventListener("loaded", () => {
-        loading.classList.add("hidden");
-        setTimeout(() => { loading.style.display = "none"; }, 500);
-      });
+        const targetBrain =
+          document.getElementById("target-brain");
 
-      setTimeout(() => {
-        loading.classList.add("hidden");
-        setTimeout(() => { loading.style.display = "none"; }, 500);
-      }, 8000);
+        const heartWrapper =
+          document.getElementById("heart-wrapper");
 
-      function onFound(key) {
-        activeKey = key;
-        hint.classList.add("show");
-        setTimeout(() => { hint.classList.remove("show"); }, 4000);
+        const brainWrapper =
+          document.getElementById("brain-wrapper");
+
+        const targetKidney =
+          document.getElementById("target-kidney");
+
+        const kidneyWrapper =
+          document.getElementById("kidney-wrapper");
+
+        const hint =
+          document.getElementById("control-hint");
+
+        const popup =
+          document.getElementById("info-popup");
+
+        const title =
+          document.getElementById("info-title");
+
+        const text =
+          document.getElementById("info-text");
+
+        const close =
+          document.getElementById("close-popup");
+
+
+        /* ================================================
+           PER-TARGET INTERACTION STATE
+           Each target keeps its own rotation/scale so
+           switching between organs doesn't reset
+           the others' pose.
+        ================================================= */
+
+        const targets = {
+
+          heart: {
+            wrapper: heartWrapper,
+            rotateX: 0,
+            rotateY: 0,
+            scale: 0.5
+          },
+
+          brain: {
+            wrapper: brainWrapper,
+            rotateX: 0,
+            rotateY: 0,
+            scale: 0.5
+          },
+
+          kidney: {
+            wrapper: kidneyWrapper,
+            rotateX: 0,
+            rotateY: 0,
+            scale: 0.5
+          }
+
+        };
+
+        let activeKey = null;
+
+
+        /* ================================================
+           CAMERA READY
+        ================================================= */
+
+        scene.addEventListener(
+          "renderstart",
+          () => {
+
+            loadingText.textContent =
+              "Camera ready — scan a target image";
+
+          }
+        );
+
+
+        /* ================================================
+           SCENE LOADED
+        ================================================= */
+
+        scene.addEventListener(
+          "loaded",
+          () => {
+
+            loading.classList.add("hidden");
+
+            setTimeout(
+              () => {
+
+                loading.style.display =
+                  "none";
+
+              },
+              500
+            );
+
+          }
+        );
+
+
+        /* ================================================
+           FALLBACK
+        ================================================= */
+
+        setTimeout(
+          () => {
+
+            loading.classList.add("hidden");
+
+            setTimeout(
+              () => {
+
+                loading.style.display =
+                  "none";
+
+              },
+              500
+            );
+
+          },
+          8000
+        );
+
+
+        /* ================================================
+           TARGET FOUND / LOST
+        ================================================= */
+
+        function onFound(key) {
+
+          activeKey = key;
+
+          hint.classList.add("show");
+
+          setTimeout(
+            () => {
+
+              hint.classList.remove(
+                "show"
+              );
+
+            },
+            4000
+          );
+
+        }
+
+
+        function onLost(key) {
+
+          if (activeKey === key) {
+
+            popup.classList.remove(
+              "visible"
+            );
+
+          }
+
+        }
+
+
+        targetHeart.addEventListener(
+          "targetFound",
+          () => onFound("heart")
+        );
+
+        targetHeart.addEventListener(
+          "targetLost",
+          () => onLost("heart")
+        );
+
+        targetBrain.addEventListener(
+          "targetFound",
+          () => onFound("brain")
+        );
+
+        targetBrain.addEventListener(
+          "targetLost",
+          () => onLost("brain")
+        );
+
+        targetKidney.addEventListener(
+          "targetFound",
+          () => onFound("kidney")
+        );
+
+        targetKidney.addEventListener(
+          "targetLost",
+          () => onLost("kidney")
+        );
+
+
+        /* ================================================
+           MODEL / HOTSPOT CLICK
+           Works for heart, brain and kidney since every
+           clickable element carries its own data-title
+           and data-info.
+        ================================================= */
+
+        document
+          .querySelectorAll(".main-model, .hotspot")
+          .forEach(
+            (el) => {
+
+              el.addEventListener(
+                "click",
+                () => {
+
+                  title.textContent =
+                    el.getAttribute(
+                      "data-title"
+                    );
+
+                  text.textContent =
+                    el.getAttribute(
+                      "data-info"
+                    );
+
+                  popup.classList.add(
+                    "visible"
+                  );
+
+                }
+              );
+
+            }
+          );
+
+
+        close.addEventListener(
+          "click",
+          () => {
+
+            popup.classList.remove(
+              "visible"
+            );
+
+          }
+        );
+
+
+        /* ================================================
+           ROTATION (applies to whichever target is
+           currently active/tracked)
+        ================================================= */
+
+        let rotating = false;
+
+        let lastX = 0;
+        let lastY = 0;
+
+
+        scene.addEventListener(
+          "touchstart",
+          (event) => {
+
+            if (
+              event.touches.length === 1
+            ) {
+
+              rotating = true;
+
+              lastX =
+                event.touches[0].clientX;
+
+              lastY =
+                event.touches[0].clientY;
+
+            }
+
+          },
+          { passive: true }
+        );
+
+
+        scene.addEventListener(
+          "touchmove",
+          (event) => {
+
+            if (
+              rotating &&
+              event.touches.length === 1 &&
+              activeKey
+            ) {
+
+              const state =
+                targets[activeKey];
+
+              const x =
+                event.touches[0].clientX;
+
+              const y =
+                event.touches[0].clientY;
+
+
+              const dx =
+                x - lastX;
+
+              const dy =
+                y - lastY;
+
+
+              state.rotateY +=
+                dx * 0.6;
+
+              state.rotateX -=
+                dy * 0.6;
+
+
+              state.rotateX =
+                Math.max(
+                  -60,
+                  Math.min(
+                    60,
+                    state.rotateX
+                  )
+                );
+
+
+              state.wrapper.setAttribute(
+                "rotation",
+                `${state.rotateX} ${state.rotateY} 0`
+              );
+
+
+              lastX = x;
+              lastY = y;
+
+            }
+
+          },
+          { passive: true }
+        );
+
+
+        scene.addEventListener(
+          "touchend",
+          (event) => {
+
+            if (
+              event.touches.length === 0
+            ) {
+
+              rotating = false;
+
+            }
+
+          },
+          { passive: true }
+        );
+
+
+        /* ================================================
+           PINCH ZOOM
+        ================================================= */
+
+        let pinchStart = null;
+
+
+        function distance(touches) {
+
+          const dx =
+            touches[0].clientX -
+            touches[1].clientX;
+
+          const dy =
+            touches[0].clientY -
+            touches[1].clientY;
+
+
+          return Math.sqrt(
+            dx * dx + dy * dy
+          );
+
+        }
+
+
+        scene.addEventListener(
+          "touchstart",
+          (event) => {
+
+            if (
+              event.touches.length === 2
+            ) {
+
+              pinchStart =
+                distance(
+                  event.touches
+                );
+
+            }
+
+          },
+          { passive: true }
+        );
+
+
+        scene.addEventListener(
+          "touchmove",
+          (event) => {
+
+            if (
+              event.touches.length === 2 &&
+              pinchStart &&
+              activeKey
+            ) {
+
+              const state =
+                targets[activeKey];
+
+              const now =
+                distance(
+                  event.touches
+                );
+
+
+              const ratio =
+                now / pinchStart;
+
+
+              let scale =
+                state.scale * ratio;
+
+
+              scale =
+                Math.max(
+                  0.15,
+                  Math.min(
+                    2.5,
+                    scale
+                  )
+                );
+
+
+              state.wrapper.setAttribute(
+                "scale",
+                `${scale} ${scale} ${scale}`
+              );
+
+            }
+
+          },
+          { passive: true }
+        );
+
+
+        scene.addEventListener(
+          "touchend",
+          (event) => {
+
+            if (
+              event.touches.length < 2 &&
+              pinchStart &&
+              activeKey
+            ) {
+
+              const state =
+                targets[activeKey];
+
+              const scale =
+                state.wrapper.getAttribute(
+                  "scale"
+                );
+
+              if (scale) {
+
+                state.scale =
+                  scale.x;
+
+              }
+
+              pinchStart =
+                null;
+
+            }
+
+          },
+          { passive: true }
+        );
+
+
+        /* ================================================
+           DESKTOP MOUSE ROTATION
+        ================================================= */
+
+        let mouseDown = false;
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+
+        scene.addEventListener(
+          "mousedown",
+          (event) => {
+
+            mouseDown = true;
+
+            mouseX =
+              event.clientX;
+
+            mouseY =
+              event.clientY;
+
+          }
+        );
+
+
+        scene.addEventListener(
+          "mousemove",
+          (event) => {
+
+            if (
+              !mouseDown ||
+              !activeKey
+            ) {
+              return;
+            }
+
+
+            const state =
+              targets[activeKey];
+
+
+            const dx =
+              event.clientX - mouseX;
+
+            const dy =
+              event.clientY - mouseY;
+
+
+            state.rotateY +=
+              dx * 0.6;
+
+            state.rotateX -=
+              dy * 0.6;
+
+
+            state.rotateX =
+              Math.max(
+                -60,
+                Math.min(
+                  60,
+                  state.rotateX
+                )
+              );
+
+
+            state.wrapper.setAttribute(
+              "rotation",
+              `${state.rotateX} ${state.rotateY} 0`
+            );
+
+
+            mouseX =
+              event.clientX;
+
+            mouseY =
+              event.clientY;
+
+          }
+        );
+
+
+        window.addEventListener(
+          "mouseup",
+          () => {
+
+            mouseDown = false;
+
+          }
+        );
+
+
+        /* ================================================
+           MOUSE WHEEL ZOOM
+        ================================================= */
+
+        scene.addEventListener(
+          "wheel",
+          (event) => {
+
+            event.preventDefault();
+
+            if (!activeKey) {
+              return;
+            }
+
+
+            const state =
+              targets[activeKey];
+
+
+            const factor =
+              event.deltaY > 0
+                ? 0.95
+                : 1.05;
+
+
+            state.scale =
+              Math.max(
+                0.15,
+                Math.min(
+                  2.5,
+                  state.scale * factor
+                )
+              );
+
+
+            state.wrapper.setAttribute(
+              "scale",
+              `${state.scale} ${state.scale} ${state.scale}`
+            );
+
+          },
+          { passive: false }
+        );
+
       }
 
-      function onLost(key) {
-        if (activeKey === key) {
-          popup.classList.remove("visible");
-        }
-      }
+    );
 
-      targetHeart.addEventListener("targetFound", () => onFound("heart"));
-      targetHeart.addEventListener("targetLost", () => onLost("heart"));
-
-      targetBrain.addEventListener("targetFound", () => onFound("brain"));
-      targetBrain.addEventListener("targetLost", () => onLost("brain"));
-
-      targetKidney.addEventListener("targetFound", () => onFound("kidney"));
-      targetKidney.addEventListener("targetLost", () => onLost("kidney"));
-
-      document.querySelectorAll(".main-model, .hotspot").forEach((el) => {
-        el.addEventListener("click", () => {
-          title.textContent = el.getAttribute("data-title");
-          text.textContent = el.getAttribute("data-info");
-          popup.classList.add("visible");
-        });
-      });
-
-      close.addEventListener("click", () => {
-        popup.classList.remove("visible");
-      });
-
-      let rotating = false;
-      let lastX = 0, lastY = 0;
-
-      scene.addEventListener("touchstart", (event) => {
-        if (event.touches.length === 1) {
-          rotating = true;
-          lastX = event.touches[0].clientX;
-          lastY = event.touches[0].clientY;
-        }
-      }, { passive: true });
-
-      scene.addEventListener("touchmove", (event) => {
-        if (rotating && event.touches.length === 1 && activeKey) {
-          const state = targets[activeKey];
-          const x = event.touches[0].clientX;
-          const y = event.touches[0].clientY;
-          const dx = x - lastX;
-          const dy = y - lastY;
-
-          state.rotateY += dx * 0.6;
-          state.rotateX -= dy * 0.6;
-          state.rotateX = Math.max(-60, Math.min(60, state.rotateX));
-
-          state.wrapper.setAttribute("rotation", `${state.rotateX} ${state.rotateY} 0`);
-
-          lastX = x; lastY = y;
-        }
-      }, { passive: true });
-
-      scene.addEventListener("touchend", (event) => {
-        if (event.touches.length === 0) { rotating = false; }
-      }, { passive: true });
-
-      let pinchStart = null;
-
-      function distance(touches) {
-        const dx = touches[0].clientX - touches[1].clientX;
-        const dy = touches[0].clientY - touches[1].clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-      }
-
-      scene.addEventListener("touchstart", (event) => {
-        if (event.touches.length === 2) {
-          pinchStart = distance(event.touches);
-        }
-      }, { passive: true });
-
-      scene.addEventListener("touchmove", (event) => {
-        if (event.touches.length === 2 && pinchStart && activeKey) {
-          const state = targets[activeKey];
-          const now = distance(event.touches);
-          const ratio = now / pinchStart;
-          let scale = state.scale * ratio;
-          scale = Math.max(0.15, Math.min(2.5, scale));
-          state.wrapper.setAttribute("scale", `${scale} ${scale} ${scale}`);
-        }
-      }, { passive: true });
-
-      scene.addEventListener("touchend", (event) => {
-        if (event.touches.length < 2 && pinchStart && activeKey) {
-          const state = targets[activeKey];
-          const scale = state.wrapper.getAttribute("scale");
-          if (scale) { state.scale = scale.x; }
-          pinchStart = null;
-        }
-      }, { passive: true });
-
-      let mouseDown = false;
-      let mouseX = 0, mouseY = 0;
-
-      scene.addEventListener("mousedown", (event) => {
-        mouseDown = true;
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-      });
-
-      scene.addEventListener("mousemove", (event) => {
-        if (!mouseDown || !activeKey) return;
-        const state = targets[activeKey];
-        const dx = event.clientX - mouseX;
-        const dy = event.clientY - mouseY;
-
-        state.rotateY += dx * 0.6;
-        state.rotateX -= dy * 0.6;
-        state.rotateX = Math.max(-60, Math.min(60, state.rotateX));
-
-        state.wrapper.setAttribute("rotation", `${state.rotateX} ${state.rotateY} 0`);
-
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-      });
-
-      window.addEventListener("mouseup", () => { mouseDown = false; });
-
-      scene.addEventListener("wheel", (event) => {
-        event.preventDefault();
-        if (!activeKey) return;
-        const state = targets[activeKey];
-        const factor = event.deltaY > 0 ? 0.95 : 1.05;
-        state.scale = Math.max(0.15, Math.min(2.5, state.scale * factor));
-        state.wrapper.setAttribute("scale", `${state.scale} ${state.scale} ${state.scale}`);
-      }, { passive: false });
-
-    });
   </script>
 
 </body>
+
 </html>
