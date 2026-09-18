@@ -206,8 +206,8 @@
   >
 
     <a-assets>
-      <a-asset-item id="heartModel"  src="realistic_human_heart(4).glb"></a-asset-item>
-      <a-asset-item id="brainModel"  src="low-poly_human_brain_model(1).glb"></a-asset-item>
+      <a-asset-item id="heartModel"  src="realistic_human_heart%284%29.glb"></a-asset-item>
+      <a-asset-item id="brainModel"  src="low-poly_human_brain_model%281%29.glb"></a-asset-item>
       <a-asset-item id="kidneyModel" src="human_kidney.glb"></a-asset-item>
     </a-assets>
 
@@ -354,19 +354,21 @@
 
       let activeKey = null;
 
+      // Hide the loading screen as soon as the CAMERA is ready,
+      // not when every heavy 3D model has finished downloading.
+      // Models simply pop in a moment after a target is scanned.
+      function hideLoadingScreen() {
+        loading.classList.add("hidden");
+        setTimeout(() => { loading.style.display = "none"; }, 400);
+      }
+
       scene.addEventListener("renderstart", () => {
         loadingText.textContent = "Camera ready — scan a target image";
+        hideLoadingScreen();
       });
 
-      scene.addEventListener("loaded", () => {
-        loading.classList.add("hidden");
-        setTimeout(() => { loading.style.display = "none"; }, 500);
-      });
-
-      setTimeout(() => {
-        loading.classList.add("hidden");
-        setTimeout(() => { loading.style.display = "none"; }, 500);
-      }, 8000);
+      // Safety net in case renderstart is ever delayed or missed
+      setTimeout(hideLoadingScreen, 3000);
 
       function onFound(key) {
         activeKey = key;
@@ -499,3 +501,13 @@
         event.preventDefault();
         if (!activeKey) return;
         const state = targets[activeKey];
+        const factor = event.deltaY > 0 ? 0.95 : 1.05;
+        state.scale = Math.max(0.15, Math.min(2.5, state.scale * factor));
+        state.wrapper.setAttribute("scale", `${state.scale} ${state.scale} ${state.scale}`);
+      }, { passive: false });
+
+    });
+  </script>
+
+</body>
+</html>
