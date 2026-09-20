@@ -1,74 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>AR Human Heart, Brain, Kidney &amp; Lung</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+  >
+
+  <title>AR Human Heart, Brain &amp; Kidney</title>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
   <!-- MindAR -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
+
   <style>
-    * { box-sizing: border-box; touch-action: none; }
-    html, body {
-      margin: 0; padding: 0; width: 100%; height: 100%;
-      overflow: hidden; background: transparent; font-family: Arial, sans-serif;
+
+    * {
+      box-sizing: border-box;
+      touch-action: none;
     }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      font-family: Arial, sans-serif;
+    }
+
     video {
-      position: fixed !important; top: 0 !important; left: 0 !important;
-      width: 100% !important; height: 100% !important;
-      object-fit: cover !important; z-index: 0 !important; display: block !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      z-index: 0 !important;
+      display: block !important;
     }
+
     a-scene {
-      position: fixed !important; top: 0 !important; left: 0 !important;
-      width: 100% !important; height: 100% !important;
-      margin: 0 !important; padding: 0 !important;
-      background: transparent !important; z-index: 1 !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      z-index: 1 !important;
     }
-    canvas { background: transparent !important; }
+
+    canvas {
+      background: transparent !important;
+    }
 
     #loading-screen {
-      position: fixed; inset: 0; background: #0b0f14; color: white;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      text-align: center; z-index: 10000; transition: opacity 0.4s ease;
+      position: fixed;
+      inset: 0;
+      background: #0b0f14;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 10000;
+      transition: opacity 0.4s ease;
     }
+
     #loading-screen .spinner {
-      width: 42px; height: 42px; border: 4px solid rgba(255,255,255,0.2);
-      border-top-color: #ff5566; border-radius: 50%;
-      animation: spin 0.9s linear infinite; margin-bottom: 15px;
+      width: 42px;
+      height: 42px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: #ff5566;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin-bottom: 15px;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #loading-screen.hidden { opacity: 0; pointer-events: none; }
-    #loading-screen p { margin: 5px; font-size: 14px; opacity: 0.85; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #loading-screen p {
+      margin: 5px;
+      font-size: 14px;
+      opacity: 0.85;
+    }
 
     #control-hint {
-      position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,0.70); color: white; padding: 9px 15px;
-      border-radius: 20px; font-size: 13px; z-index: 9000; opacity: 0;
-      transition: opacity 0.4s ease; pointer-events: none; white-space: nowrap;
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.70);
+      color: white;
+      padding: 9px 15px;
+      border-radius: 20px;
+      font-size: 13px;
+      z-index: 9000;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      white-space: nowrap;
     }
-    #control-hint.show { opacity: 1; }
+
+    #control-hint.show {
+      opacity: 1;
+    }
 
     #info-popup {
-      display: none; position: fixed; left: 50%; bottom: 22px;
+      display: none;
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
       transform: translateX(-50%) translateY(10px);
-      width: 350px; max-width: 88%; padding: 18px 45px 18px 18px;
-      background: rgba(15,18,22,0.95); color: white; border-radius: 15px;
-      border-left: 4px solid #ff5566; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      z-index: 9999; opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease;
+      width: 350px;
+      max-width: 88%;
+      padding: 18px 45px 18px 18px;
+      background: rgba(15,18,22,0.95);
+      color: white;
+      border-radius: 15px;
+      border-left: 4px solid #ff5566;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
+
     #info-popup.visible {
-      display: block; opacity: 1; transform: translateX(-50%) translateY(0);
+      display: block;
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
-    #info-title { margin: 0 0 7px 0; color: #ff6677; font-size: 18px; font-weight: bold; }
-    #info-text { margin: 0; font-size: 15px; line-height: 1.5; }
+
+    #info-title {
+      margin: 0 0 7px 0;
+      color: #ff6677;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #info-text {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    #models-badge {
+      position: fixed;
+      bottom: 18px;
+      right: 14px;
+      background: rgba(0,0,0,0.65);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 14px;
+      font-size: 11px;
+      z-index: 9000;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+    }
+
+    #models-badge.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     #close-popup {
-      position: absolute; top: 8px; right: 10px; border: none;
-      background: none; color: white; font-size: 21px; cursor: pointer;
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      border: none;
+      background: none;
+      color: white;
+      font-size: 21px;
+      cursor: pointer;
     }
+
   </style>
+
 </head>
 
 <body>
@@ -81,9 +206,11 @@
 
   <div id="control-hint">Drag = Rotate • Pinch = Zoom • Tap = Learn</div>
 
+  <div id="models-badge">Loading 3D organs…</div>
+
   <a-scene
     mindar-image="
-      imageTargetSrc: targets.mind;
+      imageTargetSrc: targets%20%281%29.mind?v=4;
       autoStart: true;
       uiScanning: yes;
       uiLoading: no;
@@ -99,26 +226,22 @@
     embedded
   >
 
-    <!-- MODEL ASSETS -->
     <a-assets>
-      <a-asset-item id="heartModel"  src="heart.glb"></a-asset-item>
-      <a-asset-item id="brainModel"  src="brain.glb"></a-asset-item>
-      <a-asset-item id="kidneyModel" src="kidney.glb"></a-asset-item>
-      <a-asset-item id="lungModel"   src="lung.glb"></a-asset-item>
+      <a-asset-item id="heartModel"  src="realistic_human_heart%284%29.glb"></a-asset-item>
+      <a-asset-item id="brainModel"  src="low-poly_human_brain_model%281%29.glb"></a-asset-item>
+      <a-asset-item id="kidneyModel" src="human_kidney.glb"></a-asset-item>
     </a-assets>
 
-    <!-- CAMERA -->
     <a-camera position="0 0 0" look-controls="enabled: false" cursor="rayOrigin: mouse; fuse: false">
       <a-entity cursor="fuse: false" raycaster="objects: .clickable; far: 20;" position="0 0 -1"></a-entity>
     </a-camera>
 
-    <!-- LIGHTING -->
     <a-light type="ambient" intensity="2"></a-light>
     <a-light type="directional" intensity="2" position="2 4 3"></a-light>
     <a-light type="directional" intensity="1.5" position="-3 2 1"></a-light>
 
-    <!-- TARGET 0 — HEART (targetIndex: 1 in the .mind file) -->
-    <a-entity id="target-heart" mindar-image-target="targetIndex: 1">
+    <!-- TARGET - HEART (targetIndex: 2) -->
+    <a-entity id="target-heart" mindar-image-target="targetIndex: 2">
       <a-entity id="heart-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
         <a-gltf-model
@@ -152,8 +275,8 @@
       </a-entity>
     </a-entity>
 
-    <!-- TARGET 1 — BRAIN (targetIndex: 0 in the .mind file) -->
-    <a-entity id="target-brain" mindar-image-target="targetIndex: 0">
+    <!-- TARGET - BRAIN (targetIndex: 1) -->
+    <a-entity id="target-brain" mindar-image-target="targetIndex: 1">
       <a-entity id="brain-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
         <a-gltf-model
@@ -187,8 +310,8 @@
       </a-entity>
     </a-entity>
 
-    <!-- TARGET 2 — KIDNEY (targetIndex: 2 in the .mind file) -->
-    <a-entity id="target-kidney" mindar-image-target="targetIndex: 2">
+    <!-- TARGET - KIDNEY (targetIndex: 0) -->
+    <a-entity id="target-kidney" mindar-image-target="targetIndex: 0">
       <a-entity id="kidney-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
         <a-gltf-model
@@ -215,34 +338,6 @@
       </a-entity>
     </a-entity>
 
-    <!-- TARGET 3 — LUNG (targetIndex: 3 in the .mind file) -->
-    <a-entity id="target-lung" mindar-image-target="targetIndex: 3">
-      <a-entity id="lung-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
-
-        <a-gltf-model
-          id="lung-model" class="clickable main-model"
-          data-title="🫁 Human Lungs"
-          data-info="The lungs exchange oxygen and carbon dioxide with the blood through millions of tiny air sacs called alveoli, and are protected within the rib cage."
-          src="#lungModel" position="0 0 0" rotation="0 0 0" visible="true">
-        </a-gltf-model>
-
-        <a-sphere class="clickable hotspot"
-          data-title="Bronchi"
-          data-info="The two main airways that branch from the trachea into each lung, carrying air in and out."
-          position="0 0.25 0.2" radius="0.05"
-          material="color:#88ff88; opacity:0.85; transparent:true; shader:flat;">
-        </a-sphere>
-
-        <a-sphere class="clickable hotspot"
-          data-title="Alveoli"
-          data-info="Tiny air sacs at the end of the bronchial tree where oxygen enters the blood and carbon dioxide is released to be exhaled."
-          position="0 -0.2 -0.15" radius="0.05"
-          material="color:#ff9944; opacity:0.85; transparent:true; shader:flat;">
-        </a-sphere>
-
-      </a-entity>
-    </a-entity>
-
   </a-scene>
 
   <div id="info-popup">
@@ -261,43 +356,47 @@
       const targetHeart = document.getElementById("target-heart");
       const targetBrain = document.getElementById("target-brain");
       const targetKidney = document.getElementById("target-kidney");
-      const targetLung = document.getElementById("target-lung");
 
       const heartWrapper = document.getElementById("heart-wrapper");
       const brainWrapper = document.getElementById("brain-wrapper");
       const kidneyWrapper = document.getElementById("kidney-wrapper");
-      const lungWrapper = document.getElementById("lung-wrapper");
 
       const hint = document.getElementById("control-hint");
+      const modelsBadge = document.getElementById("models-badge");
       const popup = document.getElementById("info-popup");
       const title = document.getElementById("info-title");
       const text = document.getElementById("info-text");
       const close = document.getElementById("close-popup");
 
-      // Per-target rotation/scale state so switching targets doesn't reset others
       const targets = {
         heart:  { wrapper: heartWrapper,  rotateX: 0, rotateY: 0, scale: 0.5 },
         brain:  { wrapper: brainWrapper,  rotateX: 0, rotateY: 0, scale: 0.5 },
-        kidney: { wrapper: kidneyWrapper, rotateX: 0, rotateY: 0, scale: 0.5 },
-        lung:   { wrapper: lungWrapper,   rotateX: 0, rotateY: 0, scale: 0.5 }
+        kidney: { wrapper: kidneyWrapper, rotateX: 0, rotateY: 0, scale: 0.5 }
       };
 
       let activeKey = null;
 
+      // Hide the loading screen as soon as the CAMERA is ready,
+      // not when every heavy 3D model has finished downloading.
+      // Models simply pop in a moment after a target is scanned.
+      function hideLoadingScreen() {
+        loading.classList.add("hidden");
+        setTimeout(() => { loading.style.display = "none"; }, 400);
+      }
+
       scene.addEventListener("renderstart", () => {
         loadingText.textContent = "Camera ready — scan a target image";
+        hideLoadingScreen();
       });
 
+      // Safety net in case renderstart is ever delayed or missed
+      setTimeout(hideLoadingScreen, 3000);
+
+      // Small non-blocking badge tells you when the 3D models are
+      // actually ready to appear (separate from camera being ready)
       scene.addEventListener("loaded", () => {
-        loading.classList.add("hidden");
-        setTimeout(() => { loading.style.display = "none"; }, 500);
+        modelsBadge.classList.add("hidden");
       });
-
-      // Fallback in case 'loaded' never fires
-      setTimeout(() => {
-        loading.classList.add("hidden");
-        setTimeout(() => { loading.style.display = "none"; }, 500);
-      }, 8000);
 
       function onFound(key) {
         activeKey = key;
@@ -320,10 +419,6 @@
       targetKidney.addEventListener("targetFound", () => onFound("kidney"));
       targetKidney.addEventListener("targetLost", () => onLost("kidney"));
 
-      targetLung.addEventListener("targetFound", () => onFound("lung"));
-      targetLung.addEventListener("targetLost", () => onLost("lung"));
-
-      // Model / hotspot click → popup (works for all 4 organs automatically)
       document.querySelectorAll(".main-model, .hotspot").forEach((el) => {
         el.addEventListener("click", () => {
           title.textContent = el.getAttribute("data-title");
@@ -336,7 +431,6 @@
         popup.classList.remove("visible");
       });
 
-      // ---- Touch rotate ----
       let rotating = false;
       let lastX = 0, lastY = 0;
 
@@ -370,7 +464,6 @@
         if (event.touches.length === 0) { rotating = false; }
       }, { passive: true });
 
-      // ---- Pinch zoom ----
       let pinchStart = null;
 
       function distance(touches) {
@@ -405,7 +498,6 @@
         }
       }, { passive: true });
 
-      // ---- Desktop mouse rotate ----
       let mouseDown = false;
       let mouseX = 0, mouseY = 0;
 
@@ -433,7 +525,6 @@
 
       window.addEventListener("mouseup", () => { mouseDown = false; });
 
-      // ---- Mouse wheel zoom ----
       scene.addEventListener("wheel", (event) => {
         event.preventDefault();
         if (!activeKey) return;
