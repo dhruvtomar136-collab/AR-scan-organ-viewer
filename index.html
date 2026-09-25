@@ -12,6 +12,9 @@
 
   <title>AR Human Heart, Brain &amp; Kidney</title>
 
+  <link rel="preconnect" href="https://aframe.io">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
@@ -389,8 +392,30 @@
         hideLoadingScreen();
       });
 
-      // Safety net in case renderstart is ever delayed or missed
-      setTimeout(hideLoadingScreen, 3000);
+      // Honest staged status updates instead of a blind force-hide.
+      // Some devices take longer to start the camera (older hardware,
+      // first-time WebAssembly compile for tracking, slow connection) —
+      // this keeps the loading screen up with reassuring feedback
+      // instead of silently vanishing while the camera is still starting.
+      setTimeout(() => {
+        if (loading.style.display !== "none") {
+          loadingText.textContent = "Still starting camera — this can take longer on some devices...";
+        }
+      }, 6000);
+
+      setTimeout(() => {
+        if (loading.style.display !== "none") {
+          loadingText.textContent = "Almost there — first-time setup can be slow, thanks for your patience";
+        }
+      }, 14000);
+
+      // True last-resort fallback only, in case renderstart genuinely
+      // never fires (e.g. camera permission silently denied)
+      setTimeout(() => {
+        if (loading.style.display !== "none") {
+          loadingText.textContent = "Taking unusually long — check camera permission, or reload the page";
+        }
+      }, 25000);
 
       // Small non-blocking badge tells you when the 3D models are
       // actually ready to appear (separate from camera being ready)
