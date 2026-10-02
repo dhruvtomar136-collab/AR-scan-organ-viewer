@@ -1,38 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>AR Human Heart, Brain & Kidney</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-  >
-
-  <title>AR Human Heart, Brain &amp; Kidney</title>
-
-  <link rel="preconnect" href="https://aframe.io">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-
-  <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-
-  <!-- MindAR -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-
   <style>
-
     * {
       box-sizing: border-box;
       touch-action: none;
     }
 
-    html,
-    body {
+    html, body {
       margin: 0;
-      padding: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -42,23 +25,18 @@
 
     video {
       position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
+      inset: 0 !important;
       width: 100% !important;
       height: 100% !important;
       object-fit: cover !important;
       z-index: 0 !important;
-      display: block !important;
     }
 
     a-scene {
       position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
+      inset: 0 !important;
       width: 100% !important;
       height: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
       background: transparent !important;
       z-index: 1 !important;
     }
@@ -70,29 +48,16 @@
     #loading-screen {
       position: fixed;
       inset: 0;
-      background: #0b0f14;
-      color: white;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
+      background: #0b0f14;
+      color: white;
       z-index: 10000;
-      transition: opacity 0.4s ease;
-    }
-
-    #loading-screen .spinner {
-      width: 42px;
-      height: 42px;
-      border: 4px solid rgba(255,255,255,0.2);
-      border-top-color: #ff5566;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-      margin-bottom: 15px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      transition: opacity .35s ease;
+      padding: 24px;
     }
 
     #loading-screen.hidden {
@@ -100,10 +65,29 @@
       pointer-events: none;
     }
 
-    #loading-screen p {
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid rgba(255,255,255,.2);
+      border-top-color: #ff5566;
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loading-text {
       margin: 5px;
-      font-size: 14px;
-      opacity: 0.85;
+      font-size: 15px;
+    }
+
+    #loading-subtext {
+      margin: 6px;
+      font-size: 12px;
+      opacity: .6;
     }
 
     #control-hint {
@@ -111,20 +95,38 @@
       top: 15px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.70);
+      background: rgba(0,0,0,.72);
       color: white;
       padding: 9px 15px;
       border-radius: 20px;
       font-size: 13px;
       z-index: 9000;
       opacity: 0;
-      transition: opacity 0.4s ease;
+      transition: opacity .3s ease;
       pointer-events: none;
       white-space: nowrap;
     }
 
     #control-hint.show {
       opacity: 1;
+    }
+
+    #models-badge {
+      position: fixed;
+      right: 14px;
+      bottom: 18px;
+      background: rgba(0,0,0,.65);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 14px;
+      font-size: 11px;
+      z-index: 9000;
+      transition: opacity .35s ease;
+    }
+
+    #models-badge.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     #info-popup {
@@ -136,14 +138,14 @@
       width: 350px;
       max-width: 88%;
       padding: 18px 45px 18px 18px;
-      background: rgba(15,18,22,0.95);
+      background: rgba(15,18,22,.95);
       color: white;
       border-radius: 15px;
       border-left: 4px solid #ff5566;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 25px rgba(0,0,0,.5);
       z-index: 9999;
       opacity: 0;
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition: opacity .25s ease, transform .25s ease;
     }
 
     #info-popup.visible {
@@ -153,7 +155,7 @@
     }
 
     #info-title {
-      margin: 0 0 7px 0;
+      margin: 0 0 7px;
       color: #ff6677;
       font-size: 18px;
       font-weight: bold;
@@ -165,94 +167,81 @@
       line-height: 1.5;
     }
 
-    #models-badge {
-      position: fixed;
-      bottom: 18px;
-      right: 14px;
-      background: rgba(0,0,0,0.65);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 14px;
-      font-size: 11px;
-      z-index: 9000;
-      opacity: 1;
-      transition: opacity 0.4s ease;
-    }
-
-    #models-badge.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
     #close-popup {
       position: absolute;
       top: 8px;
       right: 10px;
-      border: none;
+      border: 0;
       background: none;
       color: white;
       font-size: 21px;
       cursor: pointer;
     }
-
   </style>
-
 </head>
 
 <body>
-
   <div id="loading-screen">
     <div class="spinner"></div>
-    <p id="loading-text">Starting camera...</p>
-    <p style="font-size:12px; opacity:0.55;">Allow camera access and point at a target image</p>
+    <p id="loading-text">Starting AR camera…</p>
+    <p id="loading-subtext">Allow camera access, then point at a target image.</p>
   </div>
 
   <div id="control-hint">Drag = Rotate • Pinch = Zoom • Tap = Learn</div>
-
   <div id="models-badge">Loading 3D organs…</div>
 
   <a-scene
     mindar-image="
-      imageTargetSrc: targets%20%281%29.mind?v=4;
+      imageTargetSrc: ./targets%20%281%29.mind?v=5;
       autoStart: true;
       uiScanning: yes;
       uiLoading: no;
     "
     color-space="sRGB"
-    renderer="
-      alpha: true;
-      colorManagement: true;
-      antialias: true;
-    "
+    renderer="alpha: true; colorManagement: true; antialias: true;"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false"
     embedded
   >
 
-    <a-assets>
-      <a-asset-item id="heartModel"  src="realistic_human_heart%284%29.glb"></a-asset-item>
-      <a-asset-item id="brainModel"  src="low-poly_human_brain_model%281%29.glb"></a-asset-item>
-      <a-asset-item id="kidneyModel" src="human_kidney.glb"></a-asset-item>
+    <a-assets timeout="30000">
+      <a-asset-item id="heartModel" src="./realistic_human_heart%284%29.glb"></a-asset-item>
+      <a-asset-item id="brainModel" src="./low-poly_human_brain_model%281%29.glb"></a-asset-item>
+      <a-asset-item id="kidneyModel" src="./human_kidney.glb"></a-asset-item>
     </a-assets>
 
-    <a-camera position="0 0 0" look-controls="enabled: false" cursor="rayOrigin: mouse; fuse: false">
-      <a-entity cursor="fuse: false" raycaster="objects: .clickable; far: 20;" position="0 0 -1"></a-entity>
-    </a-camera>
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false"
+      cursor="rayOrigin: mouse; fuse: false"
+      raycaster="objects: .clickable; far: 20;"
+    ></a-camera>
 
     <a-light type="ambient" intensity="2"></a-light>
     <a-light type="directional" intensity="2" position="2 4 3"></a-light>
     <a-light type="directional" intensity="1.5" position="-3 2 1"></a-light>
 
-    <!-- TARGET - HEART (targetIndex: 2) -->
+    <!-- IMPORTANT:
+         These targetIndex values must match the order inside targets (1).mind:
+         0 = Kidney, 1 = Brain, 2 = Heart.
+         If your .mind file was generated in a different order, change ONLY these numbers.
+    -->
+
+    <!-- HEART -->
     <a-entity id="target-heart" mindar-image-target="targetIndex: 2">
-      <a-entity id="heart-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
+      <a-entity id="heart-wrapper" class="organ-wrapper"
+                position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
         <a-gltf-model
-          id="heart-model" class="clickable main-model"
+          id="heart-model"
+          class="clickable main-model"
+          src="#heartModel"
+          position="0 0 0"
+          rotation="0 0 0"
+          visible="true"
           data-title="❤️ Human Heart"
           data-info="The human heart is a muscular organ that pumps blood throughout the body. The right side receives deoxygenated blood, while the left side pumps oxygenated blood to the body."
-          src="#heartModel" position="0 0 0" rotation="0 0 0" visible="true">
-        </a-gltf-model>
+        ></a-gltf-model>
 
         <a-sphere class="clickable hotspot"
           data-title="Right Atrium"
@@ -274,222 +263,321 @@
           position="0 0.5 0" radius="0.05"
           material="color:#ffcc00; opacity:0.85; transparent:true; shader:flat;">
         </a-sphere>
-
       </a-entity>
     </a-entity>
 
-    <!-- TARGET - BRAIN (targetIndex: 1) -->
+    <!-- BRAIN -->
     <a-entity id="target-brain" mindar-image-target="targetIndex: 1">
-      <a-entity id="brain-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
+      <a-entity id="brain-wrapper" class="organ-wrapper"
+                position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
         <a-gltf-model
-          id="brain-model" class="clickable main-model"
+          id="brain-model"
+          class="clickable main-model"
+          src="#brainModel"
+          position="0 0 0"
+          rotation="0 0 0"
+          visible="true"
           data-title="🧠 Human Brain"
-          data-info="The human brain is the control center of the nervous system. It processes sensory information, coordinates movement, and governs thought, memory, and emotion."
-          src="#brainModel" position="0 0 0" rotation="0 0 0" visible="true">
-        </a-gltf-model>
+          data-info="The human brain is the control center of the nervous system. It processes sensory information, coordinates movement, and supports thought, memory, and emotion."
+        ></a-gltf-model>
 
         <a-sphere class="clickable hotspot"
           data-title="Frontal Lobe"
-          data-info="The frontal lobe governs reasoning, planning, problem-solving, movement, and parts of speech and personality."
+          data-info="The frontal lobe is involved in reasoning, planning, problem-solving, voluntary movement, and aspects of speech."
           position="0 0.3 0.35" radius="0.05"
           material="color:#66ccff; opacity:0.85; transparent:true; shader:flat;">
         </a-sphere>
 
         <a-sphere class="clickable hotspot"
           data-title="Cerebellum"
-          data-info="The cerebellum coordinates voluntary movements such as posture, balance, and speech, producing smooth and coordinated muscular activity."
+          data-info="The cerebellum helps coordinate balance, posture, and smooth voluntary movement."
           position="0 -0.15 -0.35" radius="0.05"
           material="color:#88ff88; opacity:0.85; transparent:true; shader:flat;">
         </a-sphere>
 
         <a-sphere class="clickable hotspot"
           data-title="Brainstem"
-          data-info="The brainstem connects the brain to the spinal cord and controls basic life functions like breathing, heart rate, and blood pressure."
+          data-info="The brainstem connects the brain with the spinal cord and helps control essential functions such as breathing and heart rate."
           position="0 -0.35 -0.05" radius="0.05"
           material="color:#ff9944; opacity:0.85; transparent:true; shader:flat;">
         </a-sphere>
-
       </a-entity>
     </a-entity>
 
-    <!-- TARGET - KIDNEY (targetIndex: 0) -->
+    <!-- KIDNEY -->
     <a-entity id="target-kidney" mindar-image-target="targetIndex: 0">
-      <a-entity id="kidney-wrapper" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
+      <a-entity id="kidney-wrapper" class="organ-wrapper"
+                position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5">
 
         <a-gltf-model
-          id="kidney-model" class="clickable main-model"
+          id="kidney-model"
+          class="clickable main-model"
+          src="#kidneyModel"
+          position="0 0 0"
+          rotation="0 0 0"
+          visible="true"
           data-title="🫘 Human Kidney"
-          data-info="The kidneys filter waste and excess fluid from the blood, producing urine, and help regulate blood pressure, electrolytes, and red blood cell production."
-          src="#kidneyModel" position="0 0 0" rotation="0 0 0" visible="true">
-        </a-gltf-model>
+          data-info="The kidneys filter waste and excess fluid from the blood, produce urine, and help regulate fluid balance, electrolytes, blood pressure, and red blood cell production."
+        ></a-gltf-model>
 
         <a-sphere class="clickable hotspot"
           data-title="Renal Cortex"
-          data-info="The outer region of the kidney, where blood filtration begins in structures called nephrons."
+          data-info="The renal cortex is the outer region of the kidney and contains structures where blood filtration begins."
           position="0.2 0.3 0.2" radius="0.05"
           material="color:#66ccff; opacity:0.85; transparent:true; shader:flat;">
         </a-sphere>
 
         <a-sphere class="clickable hotspot"
           data-title="Renal Pelvis"
-          data-info="A funnel-shaped structure that collects urine before it travels down the ureter to the bladder."
+          data-info="The renal pelvis collects urine before it passes through the ureter toward the bladder."
           position="-0.15 -0.1 0.1" radius="0.05"
           material="color:#ffaa33; opacity:0.85; transparent:true; shader:flat;">
         </a-sphere>
-
       </a-entity>
     </a-entity>
 
   </a-scene>
 
   <div id="info-popup">
-    <button id="close-popup">✕</button>
-    <h2 id="info-title">Human Heart</h2>
-    <p id="info-text">The human heart is a muscular organ that pumps blood throughout the body.</p>
+    <button id="close-popup" aria-label="Close">✕</button>
+    <h2 id="info-title">Human Organ</h2>
+    <p id="info-text"></p>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-
       const scene = document.querySelector("a-scene");
       const loading = document.getElementById("loading-screen");
       const loadingText = document.getElementById("loading-text");
-
-      const targetHeart = document.getElementById("target-heart");
-      const targetBrain = document.getElementById("target-brain");
-      const targetKidney = document.getElementById("target-kidney");
-
-      const heartWrapper = document.getElementById("heart-wrapper");
-      const brainWrapper = document.getElementById("brain-wrapper");
-      const kidneyWrapper = document.getElementById("kidney-wrapper");
-
-      const hint = document.getElementById("control-hint");
       const modelsBadge = document.getElementById("models-badge");
+      const hint = document.getElementById("control-hint");
+
       const popup = document.getElementById("info-popup");
       const title = document.getElementById("info-title");
       const text = document.getElementById("info-text");
       const close = document.getElementById("close-popup");
 
-      const targets = {
-        heart:  { wrapper: heartWrapper,  rotateX: 0, rotateY: 0, scale: 0.5 },
-        brain:  { wrapper: brainWrapper,  rotateX: 0, rotateY: 0, scale: 0.5 },
-        kidney: { wrapper: kidneyWrapper, rotateX: 0, rotateY: 0, scale: 0.5 }
+      const wrappers = {
+        heart: document.getElementById("heart-wrapper"),
+        brain: document.getElementById("brain-wrapper"),
+        kidney: document.getElementById("kidney-wrapper")
+      };
+
+      const states = {
+        heart:  { rotateX: 0, rotateY: 0, scale: 0.5 },
+        brain:  { rotateX: 0, rotateY: 0, scale: 0.5 },
+        kidney: { rotateX: 0, rotateY: 0, scale: 0.5 }
       };
 
       let activeKey = null;
+      let dragging = false;
+      let startX = 0;
+      let startY = 0;
+      let moved = false;
+      let pinchStart = null;
+      let pinchBaseScale = 0.5;
 
-      // Hide the loading screen as soon as the CAMERA is ready,
-      // not when every heavy 3D model has finished downloading.
-      // Models simply pop in a moment after a target is scanned.
-      function hideLoadingScreen() {
+      function hideLoading(message) {
+        if (message) loadingText.textContent = message;
         loading.classList.add("hidden");
-        setTimeout(() => { loading.style.display = "none"; }, 400);
+        setTimeout(() => {
+          loading.style.display = "none";
+        }, 400);
       }
 
-      scene.addEventListener("renderstart", () => {
-        loadingText.textContent = "Camera ready — scan a target image";
-        hideLoadingScreen();
-      });
-
-      // Honest staged status updates instead of a blind force-hide.
-      // Some devices take longer to start the camera (older hardware,
-      // first-time WebAssembly compile for tracking, slow connection) —
-      // this keeps the loading screen up with reassuring feedback
-      // instead of silently vanishing while the camera is still starting.
-      setTimeout(() => {
-        if (loading.style.display !== "none") {
-          loadingText.textContent = "Still starting camera — this can take longer on some devices...";
-        }
-      }, 6000);
-
-      setTimeout(() => {
-        if (loading.style.display !== "none") {
-          loadingText.textContent = "Almost there — first-time setup can be slow, thanks for your patience";
-        }
-      }, 14000);
-
-      // True last-resort fallback only, in case renderstart genuinely
-      // never fires (e.g. camera permission silently denied)
-      setTimeout(() => {
-        if (loading.style.display !== "none") {
-          loadingText.textContent = "Taking unusually long — check camera permission, or reload the page";
-        }
-      }, 25000);
-
-      // Small non-blocking badge tells you when the 3D models are
-      // actually ready to appear (separate from camera being ready)
-      scene.addEventListener("loaded", () => {
-        modelsBadge.classList.add("hidden");
-      });
-
-      function onFound(key) {
-        activeKey = key;
+      function showHint() {
         hint.classList.add("show");
-        setTimeout(() => { hint.classList.remove("show"); }, 4000);
+        clearTimeout(showHint.timer);
+        showHint.timer = setTimeout(() => hint.classList.remove("show"), 4000);
       }
 
-      function onLost(key) {
+      function closePopup() {
+        popup.classList.remove("visible");
+      }
+
+      function setTransform(key) {
+        const state = states[key];
+        wrappers[key].setAttribute(
+          "rotation",
+          `${state.rotateX} ${state.rotateY} 0`
+        );
+        wrappers[key].setAttribute(
+          "scale",
+          `${state.scale} ${state.scale} ${state.scale}`
+        );
+      }
+
+      function setActive(key) {
+        activeKey = key;
+        showHint();
+      }
+
+      function clearActive(key) {
         if (activeKey === key) {
-          popup.classList.remove("visible");
+          activeKey = null;
+          closePopup();
         }
       }
 
-      targetHeart.addEventListener("targetFound", () => onFound("heart"));
-      targetHeart.addEventListener("targetLost", () => onLost("heart"));
+      // MindAR lifecycle
+      scene.addEventListener("arReady", () => {
+        hideLoading("Camera ready — scan a target image");
+      });
 
-      targetBrain.addEventListener("targetFound", () => onFound("brain"));
-      targetBrain.addEventListener("targetLost", () => onLost("brain"));
+      scene.addEventListener("arError", (event) => {
+        console.error("MindAR error:", event);
+        loadingText.textContent =
+          "AR could not start. Check camera permission and reload the page.";
+      });
 
-      targetKidney.addEventListener("targetFound", () => onFound("kidney"));
-      targetKidney.addEventListener("targetLost", () => onLost("kidney"));
+      scene.addEventListener("loaded", () => {
+        modelsBadge.textContent = "3D organs ready";
+        setTimeout(() => modelsBadge.classList.add("hidden"), 1200);
+      });
 
+      // Target events
+      document.getElementById("target-heart")
+        .addEventListener("targetFound", () => setActive("heart"));
+
+      document.getElementById("target-heart")
+        .addEventListener("targetLost", () => clearActive("heart"));
+
+      document.getElementById("target-brain")
+        .addEventListener("targetFound", () => setActive("brain"));
+
+      document.getElementById("target-brain")
+        .addEventListener("targetLost", () => clearActive("brain"));
+
+      document.getElementById("target-kidney")
+        .addEventListener("targetFound", () => setActive("kidney"));
+
+      document.getElementById("target-kidney")
+        .addEventListener("targetLost", () => clearActive("kidney"));
+
+      // Model/hotspot information
       document.querySelectorAll(".main-model, .hotspot").forEach((el) => {
-        el.addEventListener("click", () => {
-          title.textContent = el.getAttribute("data-title");
-          text.textContent = el.getAttribute("data-info");
+        el.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          const dataTitle = el.getAttribute("data-title");
+          const dataInfo = el.getAttribute("data-info");
+
+          if (!dataTitle || !dataInfo) return;
+
+          title.textContent = dataTitle;
+          text.textContent = dataInfo;
           popup.classList.add("visible");
         });
       });
 
-      close.addEventListener("click", () => {
-        popup.classList.remove("visible");
-      });
+      close.addEventListener("click", closePopup);
 
-      let rotating = false;
-      let lastX = 0, lastY = 0;
-
+      // Touch controls
       scene.addEventListener("touchstart", (event) => {
+        if (!activeKey) return;
+
+        if (event.touches.length === 2) {
+          dragging = false;
+          pinchStart = distance(event.touches);
+          pinchBaseScale = states[activeKey].scale;
+          return;
+        }
+
         if (event.touches.length === 1) {
-          rotating = true;
-          lastX = event.touches[0].clientX;
-          lastY = event.touches[0].clientY;
+          dragging = true;
+          moved = false;
+          startX = event.touches[0].clientX;
+          startY = event.touches[0].clientY;
         }
       }, { passive: true });
 
       scene.addEventListener("touchmove", (event) => {
-        if (rotating && event.touches.length === 1 && activeKey) {
-          const state = targets[activeKey];
+        if (!activeKey) return;
+
+        if (event.touches.length === 2 && pinchStart) {
+          const ratio = distance(event.touches) / pinchStart;
+          const state = states[activeKey];
+
+          state.scale = clamp(
+            pinchBaseScale * ratio,
+            0.15,
+            2.5
+          );
+
+          setTransform(activeKey);
+          return;
+        }
+
+        if (
+          dragging &&
+          event.touches.length === 1
+        ) {
           const x = event.touches[0].clientX;
           const y = event.touches[0].clientY;
-          const dx = x - lastX;
-          const dy = y - lastY;
+          const dx = x - startX;
+          const dy = y - startY;
 
+          if (Math.abs(dx) + Math.abs(dy) > 5) moved = true;
+
+          const state = states[activeKey];
           state.rotateY += dx * 0.6;
-          state.rotateX -= dy * 0.6;
-          state.rotateX = Math.max(-60, Math.min(60, state.rotateX));
+          state.rotateX = clamp(state.rotateX - dy * 0.6, -60, 60);
 
-          state.wrapper.setAttribute("rotation", `${state.rotateX} ${state.rotateY} 0`);
+          setTransform(activeKey);
 
-          lastX = x; lastY = y;
+          startX = x;
+          startY = y;
         }
       }, { passive: true });
 
       scene.addEventListener("touchend", (event) => {
-        if (event.touches.length === 0) { rotating = false; }
+        if (event.touches.length < 2) pinchStart = null;
+        if (event.touches.length === 0) dragging = false;
       }, { passive: true });
 
-      let pinchStart = null;
+      // Desktop mouse controls
+      scene.addEventListener("mousedown", (event) => {
+        if (!activeKey) return;
+        dragging = true;
+        moved = false;
+        startX = event.clientX;
+        startY = event.clientY;
+      });
+
+      scene.addEventListener("mousemove", (event) => {
+        if (!dragging || !activeKey) return;
+
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+
+        if (Math.abs(dx) + Math.abs(dy) > 5) moved = true;
+
+        const state = states[activeKey];
+        state.rotateY += dx * 0.6;
+        state.rotateX = clamp(state.rotateX - dy * 0.6, -60, 60);
+
+        setTransform(activeKey);
+
+        startX = event.clientX;
+        startY = event.clientY;
+      });
+
+      window.addEventListener("mouseup", () => {
+        dragging = false;
+      });
+
+      scene.addEventListener("wheel", (event) => {
+        if (!activeKey) return;
+
+        event.preventDefault();
+
+        const state = states[activeKey];
+        const factor = event.deltaY > 0 ? 0.95 : 1.05;
+
+        state.scale = clamp(state.scale * factor, 0.15, 2.5);
+        setTransform(activeKey);
+      }, { passive: false });
 
       function distance(touches) {
         const dx = touches[0].clientX - touches[1].clientX;
@@ -497,70 +585,25 @@
         return Math.sqrt(dx * dx + dy * dy);
       }
 
-      scene.addEventListener("touchstart", (event) => {
-        if (event.touches.length === 2) {
-          pinchStart = distance(event.touches);
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      // Fallback status messages
+      setTimeout(() => {
+        if (loading.style.display !== "none") {
+          loadingText.textContent =
+            "Still starting camera… check that camera permission is allowed.";
         }
-      }, { passive: true });
+      }, 7000);
 
-      scene.addEventListener("touchmove", (event) => {
-        if (event.touches.length === 2 && pinchStart && activeKey) {
-          const state = targets[activeKey];
-          const now = distance(event.touches);
-          const ratio = now / pinchStart;
-          let scale = state.scale * ratio;
-          scale = Math.max(0.15, Math.min(2.5, scale));
-          state.wrapper.setAttribute("scale", `${scale} ${scale} ${scale}`);
+      setTimeout(() => {
+        if (loading.style.display !== "none") {
+          loadingText.textContent =
+            "If the camera does not appear, reload and allow camera access.";
         }
-      }, { passive: true });
-
-      scene.addEventListener("touchend", (event) => {
-        if (event.touches.length < 2 && pinchStart && activeKey) {
-          const state = targets[activeKey];
-          const scale = state.wrapper.getAttribute("scale");
-          if (scale) { state.scale = scale.x; }
-          pinchStart = null;
-        }
-      }, { passive: true });
-
-      let mouseDown = false;
-      let mouseX = 0, mouseY = 0;
-
-      scene.addEventListener("mousedown", (event) => {
-        mouseDown = true;
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-      });
-
-      scene.addEventListener("mousemove", (event) => {
-        if (!mouseDown || !activeKey) return;
-        const state = targets[activeKey];
-        const dx = event.clientX - mouseX;
-        const dy = event.clientY - mouseY;
-
-        state.rotateY += dx * 0.6;
-        state.rotateX -= dy * 0.6;
-        state.rotateX = Math.max(-60, Math.min(60, state.rotateX));
-
-        state.wrapper.setAttribute("rotation", `${state.rotateX} ${state.rotateY} 0`);
-
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-      });
-
-      window.addEventListener("mouseup", () => { mouseDown = false; });
-
-      scene.addEventListener("wheel", (event) => {
-        event.preventDefault();
-        if (!activeKey) return;
-        const state = targets[activeKey];
-        const factor = event.deltaY > 0 ? 0.95 : 1.05;
-        state.scale = Math.max(0.15, Math.min(2.5, state.scale * factor));
-        state.wrapper.setAttribute("scale", `${state.scale} ${state.scale} ${state.scale}`);
-      }, { passive: false });
-
+      }, 16000);
     });
   </script>
-
 </body>
 </html>
