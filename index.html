@@ -1,316 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
-  <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-  <title>AI Odyssey AR</title>
-
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-
-  <!-- MindAR -->
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-      touch-action: none;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-
-      width: 100%;
-      height: 100%;
-
-      overflow: hidden;
-
-      background: transparent;
-
-      font-family: Arial, sans-serif;
-    }
-
-
-    /* CAMERA */
-
-    video {
-      position: fixed !important;
-
-      top: 0 !important;
-      left: 0 !important;
-
-      width: 100% !important;
-      height: 100% !important;
-
-      object-fit: cover !important;
-
-      z-index: 0 !important;
-
-      display: block !important;
-    }
-
-
-    /* AR SCENE */
-
-    a-scene {
-      position: fixed !important;
-
-      top: 0 !important;
-      left: 0 !important;
-
-      width: 100% !important;
-      height: 100% !important;
-
-      margin: 0 !important;
-      padding: 0 !important;
-
-      background: transparent !important;
-
-      z-index: 1 !important;
-    }
-
-
-    canvas {
-      background: transparent !important;
-    }
-
-
-    /* LOADING SCREEN */
-
-    #loading-screen {
-      position: fixed;
-
-      inset: 0;
-
-      background: #080d18;
-
-      color: white;
-
-      display: flex;
-
-      flex-direction: column;
-
-      justify-content: center;
-
-      align-items: center;
-
-      text-align: center;
-
-      z-index: 10000;
-
-      transition: opacity 0.4s ease;
-    }
-
-
-    #loading-screen .spinner {
-      width: 42px;
-      height: 42px;
-
-      border: 4px solid rgba(255,255,255,0.2);
-
-      border-top-color: #00d9ff;
-
-      border-radius: 50%;
-
-      animation: spin 0.9s linear infinite;
-
-      margin-bottom: 15px;
-    }
-
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-
-    #loading-screen.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-
-    #loading-screen p {
-      margin: 5px;
-      font-size: 14px;
-      opacity: 0.85;
-    }
-
-
-    /* AI ODYSSEY HEADER */
-
-    #header {
-      position: fixed;
-
-      top: 15px;
-
-      left: 0;
-      right: 0;
-
-      text-align: center;
-
-      color: white;
-
-      font-size: 22px;
-
-      font-weight: bold;
-
-      z-index: 9000;
-
-      text-shadow:
-        0 0 5px #00eaff,
-        0 0 15px #008cff;
-
-      pointer-events: none;
-    }
-
-
-    /* CONTROL MESSAGE */
-
-    #control-hint {
-
-      position: fixed;
-
-      top: 55px;
-
-      left: 50%;
-
-      transform: translateX(-50%);
-
-      background: rgba(0,0,0,0.70);
-
-      color: white;
-
-      padding: 9px 15px;
-
-      border-radius: 20px;
-
-      font-size: 13px;
-
-      z-index: 9000;
-
-      opacity: 0;
-
-      transition: opacity 0.4s ease;
-
-      pointer-events: none;
-
-      white-space: nowrap;
-    }
-
-
-    #control-hint.show {
-      opacity: 1;
-    }
-
-
-    /* INFORMATION POPUP */
-
-    #info-popup {
-
-      display: none;
-
-      position: fixed;
-
-      left: 50%;
-
-      bottom: 22px;
-
-      transform:
-        translateX(-50%)
-        translateY(10px);
-
-      width: 350px;
-
-      max-width: 88%;
-
-      padding: 18px 45px 18px 18px;
-
-      background: rgba(10,15,25,0.95);
-
-      color: white;
-
-      border-radius: 15px;
-
-      border-left: 4px solid #00d9ff;
-
-      box-shadow:
-        0 8px 25px rgba(0,0,0,0.5);
-
-      z-index: 9999;
-
-      opacity: 0;
-
-      transition:
-        opacity 0.25s ease,
-        transform 0.25s ease;
-    }
-
-
-    #info-popup.visible {
-
-      display: block;
-
-      opacity: 1;
-
-      transform:
-        translateX(-50%)
-        translateY(0);
-    }
-
-
-    #info-title {
-
-      margin: 0 0 7px 0;
-
-      color: #00d9ff;
-
-      font-size: 18px;
-
-      font-weight: bold;
-    }
-
-
-    #info-text {
-
-      margin: 0;
-
-      font-size: 15px;
-
-      line-height: 1.5;
-    }
-
-
-    #close-popup {
-
-      position: absolute;
-
-      top: 8px;
-
-      right: 10px;
-
-      border: none;
-
-      background: none;
-
-      color: white;
-
-      font-size: 21px;
-
-      cursor: pointer;
-    }
-
-  </style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>AI Odyssey AR</title>
+
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+<style>
+
+html,body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+overflow:hidden;
+background:transparent;
+font-family:Arial,sans-serif;
+}
+
+#loading{
+position:fixed;
+inset:0;
+background:#07101d;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:9999;
+font-size:18px;
+}
+
+#title{
+position:fixed;
+top:15px;
+left:0;
+right:0;
+text-align:center;
+color:white;
+font-size:21px;
+font-weight:bold;
+z-index:9000;
+text-shadow:0 0 10px #00d9ff;
+pointer-events:none;
+}
+
+#hint{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(0,0,0,.75);
+color:white;
+padding:10px 16px;
+border-radius:20px;
+z-index:9000;
+font-size:13px;
+}
+
+#popup{
+display:none;
+position:fixed;
+left:50%;
+bottom:65px;
+transform:translateX(-50%);
+width:320px;
+max-width:85%;
+background:rgba(5,10,20,.95);
+color:white;
+padding:18px;
+border-radius:15px;
+border:2px solid #00d9ff;
+z-index:9998;
+}
+
+#popup h2{
+margin:0 0 8px;
+color:#00d9ff;
+font-size:19px;
+}
+
+#popup p{
+margin:0;
+line-height:1.5;
+font-size:14px;
+}
+
+#close{
+position:absolute;
+right:8px;
+top:5px;
+background:none;
+border:0;
+color:white;
+font-size:20px;
+}
+
+</style>
 
 </head>
 
@@ -318,1002 +111,555 @@
 <body>
 
 
-<!-- AI ODYSSEY HEADER -->
-
-<div id="header">
-  AI ODYSSEY • AR SCIENCE EXPLORER
+<div id="loading">
+Loading AI Odyssey AR...
+<br>
+<small>Allow camera access</small>
 </div>
 
 
-<!-- LOADING SCREEN -->
-
-<div id="loading-screen">
-
-  <div class="spinner"></div>
-
-  <p id="loading-text">
-    Starting camera...
-  </p>
-
-  <p style="font-size:12px; opacity:0.55;">
-    Allow camera access and point at a target image
-  </p>
-
+<div id="title">
+AI ODYSSEY • AR SCIENCE EXPLORER
 </div>
 
 
-<!-- CONTROL HINT -->
-
-<div id="control-hint">
-  Drag = Rotate • Pinch = Zoom • Tap = Learn
+<div id="hint">
+Point camera at the organ card
 </div>
 
-
-<!-- AR SCENE -->
 
 <a-scene
 
-  mindar-image="
-    imageTargetSrc: targets%20%281%29.mind;
-    autoStart: true;
-    uiScanning: yes;
-    uiLoading: no;
-  "
+embedded
 
-  color-space="sRGB"
+mindar-image="
+imageTargetSrc: targets%20%281%29.mind;
+autoStart: true;
+uiScanning: yes;
+uiLoading: yes;
+"
 
-  renderer="
-    alpha: true;
-    colorManagement: true;
-    antialias: true;
-  "
+renderer="
+colorManagement: true;
+alpha: true;
+antialias: true;
+"
 
-  vr-mode-ui="enabled: false"
+vr-mode-ui="enabled:false"
 
-  device-orientation-permission-ui="enabled: false"
-
-  embedded
+device-orientation-permission-ui="enabled:false"
 >
 
 
-  <!-- MODEL ASSETS -->
+<a-assets>
 
-  <a-assets>
+<a-asset-item
+id="heart"
+src="realistic_human_heart%284%29.glb">
+</a-asset-item>
 
-    <!-- HEART -->
 
-    <a-asset-item
-      id="heartModel"
-      src="realistic_human_heart%284%29.glb">
-    </a-asset-item>
+<a-asset-item
+id="brain"
+src="low-poly_human_brain_model%281%29.glb">
+</a-asset-item>
 
 
-    <!-- BRAIN -->
+<a-asset-item
+id="kidney"
+src="human_kidney.glb">
+</a-asset-item>
 
-    <a-asset-item
-      id="brainModel"
-      src="low-poly_human_brain_model%281%29.glb">
-    </a-asset-item>
+</a-assets>
 
-  </a-assets>
 
+<a-camera
+position="0 0 0"
+look-controls="enabled:false">
+</a-camera>
 
-  <!-- CAMERA -->
 
-  <a-camera
+<a-light
+type="ambient"
+intensity="2">
+</a-light>
 
-    position="0 0 0"
 
-    look-controls="enabled: false"
+<a-light
+type="directional"
+position="2 4 3"
+intensity="2">
+</a-light>
 
-    cursor="rayOrigin: mouse; fuse: false">
 
-    <a-entity
+<!-- =========================
+     TARGET 0 = HEART
+========================= -->
 
-      cursor="fuse: false"
+<a-entity
+mindar-image-target="targetIndex:0"
+id="heartTarget">
 
-      raycaster="
-        objects: .clickable;
-        far: 20;
-      "
 
-      position="0 0 -1">
+<a-entity
+id="heartGroup"
+position="0 0 0"
+rotation="0 0 0"
+scale="0.5 0.5 0.5">
 
-    </a-entity>
 
-  </a-camera>
+<a-gltf-model
+id="heartModel"
+src="#heart"
+class="clickable"
+position="0 0 0"
+rotation="0 0 0"
+data-title="Human Heart"
+data-info="The human heart is a muscular organ that pumps blood throughout the body. The right side receives deoxygenated blood and the left side pumps oxygenated blood.">
+</a-gltf-model>
 
 
-  <!-- LIGHTING -->
+<a-sphere
+class="clickable"
+position="0.3 0.4 0.2"
+radius="0.06"
+color="#ff3355"
+data-title="Right Atrium"
+data-info="The right atrium receives deoxygenated blood returning from the body.">
+</a-sphere>
 
-  <a-light
-    type="ambient"
-    intensity="2">
-  </a-light>
 
+<a-sphere
+class="clickable"
+position="-0.2 0.1 0.3"
+radius="0.06"
+color="#33aaff"
+data-title="Left Ventricle"
+data-info="The left ventricle pumps oxygenated blood to the body through the aorta.">
+</a-sphere>
 
-  <a-light
-    type="directional"
-    intensity="2"
-    position="2 4 3">
-  </a-light>
 
+</a-entity>
 
-  <a-light
-    type="directional"
-    intensity="1.5"
-    position="-3 2 1">
-  </a-light>
+</a-entity>
 
 
-  <!-- =========================================
-       TARGET 0 — HEART
-  ========================================== -->
+<!-- =========================
+     TARGET 1 = BRAIN
+========================= -->
 
-  <a-entity
-    id="target-heart"
-    mindar-image-target="targetIndex: 0">
+<a-entity
+mindar-image-target="targetIndex:1"
+id="brainTarget">
 
 
-    <a-entity
-      id="heart-wrapper"
-
-      position="0 0 0"
-
-      rotation="0 0 0"
-
-      scale="0.5 0.5 0.5">
-
-
-      <!-- HEART MODEL -->
-
-      <a-gltf-model
-
-        id="heart-model"
-
-        class="clickable main-model"
-
-        data-title="❤️ Human Heart"
-
-        data-info="The human heart is a muscular organ that pumps blood throughout the body. The right side receives deoxygenated blood, while the left side pumps oxygenated blood to the body."
-
-        src="#heartModel"
-
-        position="0 0 0"
-
-        rotation="0 0 0">
-
-      </a-gltf-model>
-
-
-      <!-- RIGHT ATRIUM -->
-
-      <a-sphere
-
-        class="clickable hotspot"
-
-        data-title="Right Atrium"
-
-        data-info="The right atrium receives deoxygenated blood returning from the body through the vena cava."
-
-        position="0.3 0.4 0.2"
-
-        radius="0.05"
-
-        material="
-          color:#ff5566;
-          opacity:0.85;
-          transparent:true;
-          shader:flat;
-        ">
-
-      </a-sphere>
-
-
-      <!-- LEFT VENTRICLE -->
-
-      <a-sphere
-
-        class="clickable hotspot"
-
-        data-title="Left Ventricle"
-
-        data-info="The left ventricle pumps oxygenated blood out to the body through the aorta."
-
-        position="-0.2 0.1 0.3"
-
-        radius="0.05"
-
-        material="
-          color:#33aaff;
-          opacity:0.85;
-          transparent:true;
-          shader:flat;
-        ">
-
-      </a-sphere>
-
-
-      <!-- AORTIC VALVE -->
-
-      <a-sphere
-
-        class="clickable hotspot"
-
-        data-title="Aortic Valve"
-
-        data-info="The aortic valve helps prevent blood from flowing backward into the left ventricle."
-
-        position="0 0.5 0"
-
-        radius="0.05"
-
-        material="
-          color:#ffcc00;
-          opacity:0.85;
-          transparent:true;
-          shader:flat;
-        ">
-
-      </a-sphere>
-
-
-    </a-entity>
-
-  </a-entity>
-
-
-  <!-- =========================================
-       TARGET 1 — BRAIN
-  ========================================== -->
-
-  <a-entity
-
-    id="target-brain"
-
-    mindar-image-target="targetIndex: 1">
-
-
-    <a-entity
-
-      id="brain-wrapper"
-
-      position="0 0 0"
-
-      rotation="0 0 0"
-
-      scale="0.5 0.5 0.5">
-
-
-      <!-- BRAIN MODEL -->
-
-      <a-gltf-model
-
-        id="brain-model"
-
-        class="clickable main-model"
-
-        data-title="🧠 Human Brain"
-
-        data-info="The human brain is the control center of the nervous system. It processes sensory information, coordinates movement, and supports thought and memory."
-
-        src="#brainModel"
-
-        position="0 0 0"
-
-        rotation="0 0 0">
-
-      </a-gltf-model>
-
-
-      <!-- FRONTAL LOBE -->
-
-      <a-sphere
-
-        class="clickable hotspot"
-
-        data-title="Frontal Lobe"
-
-        data-info="The frontal lobe is involved in reasoning, planning, problem-solving, movement, and aspects of speech."
-
-        position="0 0.3 0.35"
-
-        radius="0.05"
-
-        material="
-          color:#66ccff;
-          opacity:0.85;
-          transparent:true;
-          shader:flat;
-        ">
-
-      </a-sphere>
-
-
-      <!-- CEREBELLUM -->
-
-      <a-sphere
-
-        class="clickable hotspot"
-
-        data-title="Cerebellum"
-
-        data-info="The cerebellum helps coordinate voluntary movement, balance, posture, and smooth muscular activity."
-
-        position="0 -0.15 -0.35"
-
-        radius="0.05"
-
-        material="
-          color:#88ff88;
-          opacity:0.85;
-          transparent:true;
-          shader:flat;
-        ">
-
-      </a-sphere>
-
-
-      <!-- BRAINSTEM -->
-
-      <a-sphere
-
-        class="clickable hotspot"
-
-        data-title="Brainstem"
-
-        data-info="The brainstem connects the brain with the spinal cord and helps regulate basic functions such as breathing and heart rate."
-
-        position="0 -0.35 -0.05"
-
-        radius="0.05"
-
-        material="
-          color:#ff9944;
-          opacity:0.85;
-          transparent:true;
-          shader:flat;
-        ">
-
-      </a-sphere>
-
-
-    </a-entity>
-
-  </a-entity>
+<a-entity
+id="brainGroup"
+position="0 0 0"
+rotation="0 0 0"
+scale="0.5 0.5 0.5">
+
+
+<a-gltf-model
+id="brainModel"
+src="#brain"
+class="clickable"
+position="0 0 0"
+rotation="0 0 0"
+data-title="Human Brain"
+data-info="The human brain is the control center of the nervous system. It processes information, controls movement, and supports thought and memory.">
+</a-gltf-model>
+
+
+<a-sphere
+class="clickable"
+position="0 0.3 0.35"
+radius="0.06"
+color="#66ccff"
+data-title="Frontal Lobe"
+data-info="The frontal lobe is involved in reasoning, planning, problem solving and voluntary movement.">
+</a-sphere>
+
+
+<a-sphere
+class="clickable"
+position="0 -0.15 -0.35"
+radius="0.06"
+color="#88ff88"
+data-title="Cerebellum"
+data-info="The cerebellum helps coordinate balance, posture and smooth movement.">
+</a-sphere>
+
+
+<a-sphere
+class="clickable"
+position="0 -0.35 -0.05"
+radius="0.06"
+color="#ff9944"
+data-title="Brainstem"
+data-info="The brainstem connects the brain to the spinal cord and helps control important body functions.">
+</a-sphere>
+
+
+</a-entity>
+
+</a-entity>
 
 
 </a-scene>
 
 
-<!-- INFORMATION POPUP -->
+<!-- INFORMATION -->
 
-<div id="info-popup">
+<div id="popup">
 
-  <button id="close-popup">
-    ✕
-  </button>
+<button id="close">×</button>
 
-  <h2 id="info-title">
-    Human Heart
-  </h2>
+<h2 id="popupTitle"></h2>
 
-  <p id="info-text">
-    The human heart is a muscular organ that pumps blood throughout the body.
-  </p>
+<p id="popupText"></p>
 
 </div>
 
 
 <script>
 
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
+const scene=document.querySelector("a-scene");
 
+const loading=document.getElementById("loading");
 
-    /* ELEMENTS */
+const popup=document.getElementById("popup");
 
-    const scene =
-      document.querySelector("a-scene");
+const popupTitle=document.getElementById("popupTitle");
 
-    const loading =
-      document.getElementById("loading-screen");
+const popupText=document.getElementById("popupText");
 
-    const loadingText =
-      document.getElementById("loading-text");
+const close=document.getElementById("close");
 
-    const targetHeart =
-      document.getElementById("target-heart");
+const heartGroup=document.getElementById("heartGroup");
 
-    const targetBrain =
-      document.getElementById("target-brain");
+const brainGroup=document.getElementById("brainGroup");
 
-    const heartWrapper =
-      document.getElementById("heart-wrapper");
+let activeGroup=null;
 
-    const brainWrapper =
-      document.getElementById("brain-wrapper");
+let activeTarget=null;
 
-    const hint =
-      document.getElementById("control-hint");
+let rotating=false;
 
-    const popup =
-      document.getElementById("info-popup");
+let lastX=0;
 
-    const title =
-      document.getElementById("info-title");
+let lastY=0;
 
-    const text =
-      document.getElementById("info-text");
 
-    const close =
-      document.getElementById("close-popup");
+/* =========================
+   SCENE READY
+========================= */
 
+scene.addEventListener("loaded",function(){
 
-    /* TARGET STATES */
+setTimeout(function(){
 
-    const targets = {
+loading.style.display="none";
 
-      heart: {
-        wrapper: heartWrapper,
-        rotateX: 0,
-        rotateY: 0,
-        scale: 0.5
-      },
+},1000);
 
-      brain: {
-        wrapper: brainWrapper,
-        rotateX: 0,
-        rotateY: 0,
-        scale: 0.5
-      }
+});
 
-    };
 
+/* =========================
+   TARGET DETECTION
+========================= */
 
-    let activeKey = null;
+document
+.getElementById("heartTarget")
+.addEventListener("targetFound",function(){
 
+activeGroup=heartGroup;
+activeTarget="heart";
 
-    /* CAMERA READY */
+});
 
-    scene.addEventListener(
-      "renderstart",
-      () => {
 
-        loadingText.textContent =
-          "Camera ready — scan a target image";
+document
+.getElementById("brainTarget")
+.addEventListener("targetFound",function(){
 
-      }
-    );
+activeGroup=brainGroup;
+activeTarget="brain";
 
+});
 
-    /* SCENE LOADED */
 
-    scene.addEventListener(
-      "loaded",
-      () => {
+document
+.getElementById("heartTarget")
+.addEventListener("targetLost",function(){
 
-        loading.classList.add("hidden");
+if(activeTarget==="heart"){
+popup.style.display="none";
+}
 
-        setTimeout(
-          () => {
+});
 
-            loading.style.display =
-              "none";
 
-          },
-          500
-        );
+document
+.getElementById("brainTarget")
+.addEventListener("targetLost",function(){
 
-      }
-    );
+if(activeTarget==="brain"){
+popup.style.display="none";
+}
 
+});
 
-    /* FALLBACK */
 
-    setTimeout(
-      () => {
+/* =========================
+   TAP INFORMATION
+========================= */
 
-        loading.classList.add("hidden");
+document
+.querySelectorAll(".clickable")
+.forEach(function(element){
 
-        setTimeout(
-          () => {
+element.addEventListener("click",function(){
 
-            loading.style.display =
-              "none";
+const title=
+element.getAttribute("data-title");
 
-          },
-          500
-        );
+const info=
+element.getAttribute("data-info");
 
-      },
-      8000
-    );
+popupTitle.textContent=title;
 
+popupText.textContent=info;
 
-    /* TARGET FOUND */
+popup.style.display="block";
 
-    function onFound(key) {
+});
 
-      activeKey = key;
+});
 
-      hint.classList.add("show");
 
-      setTimeout(
-        () => {
+close.addEventListener("click",function(){
 
-          hint.classList.remove("show");
+popup.style.display="none";
 
-        },
-        4000
-      );
+});
 
-    }
 
+/* =========================
+   TOUCH ROTATION
+========================= */
 
-    /* TARGET LOST */
+scene.addEventListener("touchstart",function(e){
 
-    function onLost(key) {
+if(e.touches.length===1){
 
-      if (activeKey === key) {
+rotating=true;
 
-        popup.classList.remove(
-          "visible"
-        );
+lastX=e.touches[0].clientX;
 
-      }
+lastY=e.touches[0].clientY;
 
-    }
+}
 
+},{passive:true});
 
-    targetHeart.addEventListener(
-      "targetFound",
-      () => onFound("heart")
-    );
 
+scene.addEventListener("touchmove",function(e){
 
-    targetHeart.addEventListener(
-      "targetLost",
-      () => onLost("heart")
-    );
+if(
+rotating &&
+e.touches.length===1 &&
+activeGroup
+){
 
+const x=e.touches[0].clientX;
 
-    targetBrain.addEventListener(
-      "targetFound",
-      () => onFound("brain")
-    );
+const y=e.touches[0].clientY;
 
+const dx=x-lastX;
 
-    targetBrain.addEventListener(
-      "targetLost",
-      () => onLost("brain")
-    );
+const dy=y-lastY;
 
+let rotation=
+activeGroup.getAttribute("rotation");
 
-    /* TAP / CLICK INFORMATION */
+rotation.y += dx*0.7;
 
-    document
-      .querySelectorAll(
-        ".main-model, .hotspot"
-      )
-      .forEach(
-        (el) => {
+rotation.x -= dy*0.7;
 
-          el.addEventListener(
-            "click",
-            () => {
+rotation.x=
+Math.max(-60,Math.min(60,rotation.x));
 
-              title.textContent =
-                el.getAttribute(
-                  "data-title"
-                );
-
-              text.textContent =
-                el.getAttribute(
-                  "data-info"
-                );
-
-              popup.classList.add(
-                "visible"
-              );
-
-            }
-          );
-
-        }
-      );
-
-
-    /* CLOSE POPUP */
-
-    close.addEventListener(
-      "click",
-      () => {
-
-        popup.classList.remove(
-          "visible"
-        );
-
-      }
-    );
-
-
-    /* ROTATION */
-
-    let rotating = false;
-
-    let lastX = 0;
-    let lastY = 0;
-
-
-    scene.addEventListener(
-      "touchstart",
-      (event) => {
-
-        if (
-          event.touches.length === 1
-        ) {
-
-          rotating = true;
-
-          lastX =
-            event.touches[0].clientX;
-
-          lastY =
-            event.touches[0].clientY;
-
-        }
-
-      },
-      { passive: true }
-    );
-
-
-    scene.addEventListener(
-      "touchmove",
-      (event) => {
-
-        if (
-          rotating &&
-          event.touches.length === 1 &&
-          activeKey
-        ) {
-
-          const state =
-            targets[activeKey];
-
-          const x =
-            event.touches[0].clientX;
-
-          const y =
-            event.touches[0].clientY;
-
-
-          const dx =
-            x - lastX;
-
-          const dy =
-            y - lastY;
-
-
-          state.rotateY +=
-            dx * 0.6;
-
-          state.rotateX -=
-            dy * 0.6;
-
-
-          state.rotateX =
-            Math.max(
-              -60,
-              Math.min(
-                60,
-                state.rotateX
-              )
-            );
-
-
-          state.wrapper.setAttribute(
-            "rotation",
-            `${state.rotateX} ${state.rotateY} 0`
-          );
-
-
-          lastX = x;
-          lastY = y;
-
-        }
-
-      },
-      { passive: true }
-    );
-
-
-    scene.addEventListener(
-      "touchend",
-      (event) => {
-
-        if (
-          event.touches.length === 0
-        ) {
-
-          rotating = false;
-
-        }
-
-      },
-      { passive: true }
-    );
-
-
-    /* PINCH ZOOM */
-
-    let pinchStart = null;
-
-
-    function distance(touches) {
-
-      const dx =
-        touches[0].clientX -
-        touches[1].clientX;
-
-      const dy =
-        touches[0].clientY -
-        touches[1].clientY;
-
-
-      return Math.sqrt(
-        dx * dx + dy * dy
-      );
-
-    }
-
-
-    scene.addEventListener(
-      "touchstart",
-      (event) => {
-
-        if (
-          event.touches.length === 2
-        ) {
-
-          pinchStart =
-            distance(
-              event.touches
-            );
-
-        }
-
-      },
-      { passive: true }
-    );
-
-
-    scene.addEventListener(
-      "touchmove",
-      (event) => {
-
-        if (
-          event.touches.length === 2 &&
-          pinchStart &&
-          activeKey
-        ) {
-
-          const state =
-            targets[activeKey];
-
-          const now =
-            distance(
-              event.touches
-            );
-
-
-          const ratio =
-            now / pinchStart;
-
-
-          let scale =
-            state.scale * ratio;
-
-
-          scale =
-            Math.max(
-              0.15,
-              Math.min(
-                2.5,
-                scale
-              )
-            );
-
-
-          state.wrapper.setAttribute(
-            "scale",
-            `${scale} ${scale} ${scale}`
-          );
-
-        }
-
-      },
-      { passive: true }
-    );
-
-
-    scene.addEventListener(
-      "touchend",
-      (event) => {
-
-        if (
-          event.touches.length < 2 &&
-          pinchStart &&
-          activeKey
-        ) {
-
-          const state =
-            targets[activeKey];
-
-          const scale =
-            state.wrapper.getAttribute(
-              "scale"
-            );
-
-          if (scale) {
-
-            state.scale =
-              scale.x;
-
-          }
-
-          pinchStart = null;
-
-        }
-
-      },
-      { passive: true }
-    );
-
-
-    /* DESKTOP MOUSE ROTATION */
-
-    let mouseDown = false;
-
-    let mouseX = 0;
-    let mouseY = 0;
-
-
-    scene.addEventListener(
-      "mousedown",
-      (event) => {
-
-        mouseDown = true;
-
-        mouseX =
-          event.clientX;
-
-        mouseY =
-          event.clientY;
-
-      }
-    );
-
-
-    scene.addEventListener(
-      "mousemove",
-      (event) => {
-
-        if (
-          !mouseDown ||
-          !activeKey
-        ) {
-
-          return;
-
-        }
-
-
-        const state =
-          targets[activeKey];
-
-
-        const dx =
-          event.clientX - mouseX;
-
-        const dy =
-          event.clientY - mouseY;
-
-
-        state.rotateY +=
-          dx * 0.6;
-
-        state.rotateX -=
-          dy * 0.6;
-
-
-        state.rotateX =
-          Math.max(
-            -60,
-            Math.min(
-              60,
-              state.rotateX
-            )
-          );
-
-
-        state.wrapper.setAttribute(
-          "rotation",
-          `${state.rotateX} ${state.rotateY} 0`
-        );
-
-
-        mouseX =
-          event.clientX;
-
-        mouseY =
-          event.clientY;
-
-      }
-    );
-
-
-    window.addEventListener(
-      "mouseup",
-      () => {
-
-        mouseDown = false;
-
-      }
-    );
-
-
-    /* MOUSE WHEEL ZOOM */
-
-    scene.addEventListener(
-      "wheel",
-      (event) => {
-
-        event.preventDefault();
-
-        if (!activeKey) {
-          return;
-        }
-
-
-        const state =
-          targets[activeKey];
-
-
-        const factor =
-          event.deltaY > 0
-            ? 0.95
-            : 1.05;
-
-
-        state.scale =
-          Math.max(
-            0.15,
-            Math.min(
-              2.5,
-              state.scale * factor
-            )
-          );
-
-
-        state.wrapper.setAttribute(
-          "scale",
-          `${state.scale} ${state.scale} ${state.scale}`
-        );
-
-      },
-      { passive: false }
-    );
-
-  }
-
+activeGroup.setAttribute(
+"rotation",
+rotation
 );
+
+lastX=x;
+
+lastY=y;
+
+}
+
+},{passive:true});
+
+
+scene.addEventListener("touchend",function(){
+
+rotating=false;
+
+},{passive:true});
+
+
+/* =========================
+   MOUSE ROTATION
+========================= */
+
+scene.addEventListener("mousedown",function(e){
+
+if(activeGroup){
+
+rotating=true;
+
+lastX=e.clientX;
+
+lastY=e.clientY;
+
+}
+
+});
+
+
+scene.addEventListener("mousemove",function(e){
+
+if(
+rotating &&
+activeGroup
+){
+
+const dx=e.clientX-lastX;
+
+const dy=e.clientY-lastY;
+
+let rotation=
+activeGroup.getAttribute("rotation");
+
+rotation.y += dx*0.7;
+
+rotation.x -= dy*0.7;
+
+rotation.x=
+Math.max(-60,Math.min(60,rotation.x));
+
+activeGroup.setAttribute(
+"rotation",
+rotation
+);
+
+lastX=e.clientX;
+
+lastY=e.clientY;
+
+}
+
+});
+
+
+window.addEventListener("mouseup",function(){
+
+rotating=false;
+
+});
+
+
+/* =========================
+   PINCH ZOOM
+========================= */
+
+let pinchStart=0;
+
+let originalScale=0.5;
+
+
+function getDistance(touches){
+
+const dx=
+touches[0].clientX-
+touches[1].clientX;
+
+const dy=
+touches[0].clientY-
+touches[1].clientY;
+
+return Math.sqrt(dx*dx+dy*dy);
+
+}
+
+
+scene.addEventListener("touchstart",function(e){
+
+if(
+e.touches.length===2 &&
+activeGroup
+){
+
+pinchStart=
+getDistance(e.touches);
+
+const scale=
+activeGroup.getAttribute("scale");
+
+originalScale=scale.x;
+
+}
+
+},{passive:true});
+
+
+scene.addEventListener("touchmove",function(e){
+
+if(
+e.touches.length===2 &&
+activeGroup &&
+pinchStart
+){
+
+const distance=
+getDistance(e.touches);
+
+let scale=
+originalScale*
+(distance/pinchStart);
+
+scale=
+Math.max(
+0.15,
+Math.min(2.5,scale)
+);
+
+activeGroup.setAttribute(
+"scale",
+`${scale} ${scale} ${scale}`
+);
+
+}
+
+},{passive:true});
+
+
+scene.addEventListener("touchend",function(e){
+
+if(e.touches.length<2){
+
+pinchStart=0;
+
+}
+
+},{passive:true});
+
 
 </script>
 
-
 </body>
-
 </html>
