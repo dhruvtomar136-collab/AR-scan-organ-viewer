@@ -70,10 +70,6 @@
 
     #control-hint.show { opacity: 1; }
 
-    /* ===== DEBUG PANEL =====
-       Shows what's happening in real time, directly on
-       the phone screen, no laptop/DevTools needed. */
-
     #debug-panel {
       position: fixed;
       bottom: 0; left: 0;
@@ -321,9 +317,6 @@
       const debugPanel = document.getElementById("debug-panel");
 
 
-      /* ===== DEBUG LOGGER =====
-         Prints timestamped status lines right on screen. */
-
       function log(msg, level) {
 
         const line = document.createElement("div");
@@ -345,8 +338,6 @@
       log("Page loaded, booting MindAR…");
 
 
-      /* ===== CAMERA SUPPORT CHECK ===== */
-
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
 
         log("Browser has no camera API (getUserMedia missing). Open this link in Chrome or Safari, not an in-app browser.", "err");
@@ -359,8 +350,6 @@
 
       }
 
-
-      /* ===== SCENE / CAMERA EVENTS ===== */
 
       scene.addEventListener("renderstart", () => {
         log("Camera stream started.");
@@ -398,8 +387,6 @@
       });
 
 
-      /* ===== TARGET FOUND / LOST ===== */
-
       targetHeart.addEventListener("targetFound", () => log("HEART target FOUND (targetIndex 1)."));
       targetHeart.addEventListener("targetLost", () => log("HEART target LOST."));
 
@@ -407,16 +394,12 @@
       targetBrain.addEventListener("targetLost", () => log("BRAIN target LOST."));
 
 
-      /* ===== GLB MODEL LOAD / ERROR ===== */
-
       heartModel.addEventListener("model-loaded", () => log("Heart GLB loaded successfully."));
       heartModel.addEventListener("model-error", (e) => log("Heart GLB FAILED to load — check filename/path (404?).", "err"));
 
       brainModel.addEventListener("model-loaded", () => log("Brain GLB loaded successfully."));
       brainModel.addEventListener("model-error", (e) => log("Brain GLB FAILED to load — check filename/path (404?).", "err"));
 
-
-      /* ===== PER-TARGET INTERACTION STATE ===== */
 
       const targets = {
         heart: { wrapper: heartWrapper, rotateX: 0, rotateY: 0, scale: 0.5 },
@@ -449,8 +432,6 @@
       targetBrain.addEventListener("targetLost", () => onLost("brain"));
 
 
-      /* ===== MODEL / HOTSPOT CLICK ===== */
-
       document.querySelectorAll(".main-model, .hotspot").forEach((el) => {
 
         el.addEventListener("click", () => {
@@ -466,8 +447,6 @@
 
       close.addEventListener("click", () => popup.classList.remove("visible"));
 
-
-      /* ===== ROTATION ===== */
 
       let rotating = false;
       let lastX = 0, lastY = 0;
@@ -514,8 +493,6 @@
 
       }, { passive: true });
 
-
-      /* ===== PINCH ZOOM ===== */
 
       let pinchStart = null;
 
@@ -568,8 +545,6 @@
       }, { passive: true });
 
 
-      /* ===== DESKTOP MOUSE ROTATION ===== */
-
       let mouseDown = false;
       let mouseX = 0, mouseY = 0;
 
@@ -602,8 +577,6 @@
 
       window.addEventListener("mouseup", () => { mouseDown = false; });
 
-
-      /* ===== MOUSE WHEEL ZOOM ===== */
 
       scene.addEventListener("wheel", (event) => {
 
